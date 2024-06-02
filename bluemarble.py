@@ -94,9 +94,9 @@ class BuruMarbleGame:
         for entry in self.player_name_entries:
             name = entry.get()
             if name:
-                self.players.append(name)
+                self.players.append({ "name": name, "index": 1 })
             else:
-                self.players.append(f"플레이어 {len(self.players) + 1}")  # 이름을 입력하지 않은 경우 기본 이름 설정
+                self.players.append({ "name": f"플레이어 {len(self.players) + 1}", "index": 1 })  # 이름을 입력하지 않은 경우 기본 이름 설정
 
         self.name_entry_window.destroy()
         self.label.place_forget()
@@ -125,7 +125,9 @@ class BuruMarbleGame:
             frame = tk.Frame(self.money_entry_window)
             frame.pack(pady=5)
 
-            tk.Label(frame, text=f"{player}의 초기 머니:", font=("Helvetica", 10)).pack(side="left")
+            dict_player = dict(player)
+
+            tk.Label(frame, text=f"{dict_player["name"]}의 초기 머니:", font=("Helvetica", 10)).pack(side="left")
             entry = tk.Entry(frame, font=("Helvetica", 10))
             entry.pack(side="left")
             self.money_entries.append(entry)
@@ -180,7 +182,8 @@ class BuruMarbleGame:
                     self.canvas.create_text((x1 + x2) / 2, (y1 + y2) / 2, text=text, font=("Helvetica", 12), fill="black")
 
         # 플레이어 이름 및 보유 머니 출력
-        for idx, (player_name, money) in enumerate(zip(self.players, self.player_money)):
+        for idx, (player, money) in enumerate(zip(self.players, self.player_money)):
+            player_name = dict(player)["name"]
             self.canvas.create_text(60, 70 + 40 * idx, text=f"{idx + 1}. {player_name} - {money}원 \n 보유 도시: 없음", font=("Helvetica", 14), anchor="w", fill="black")
 
         # 스페이스바 이벤트 바인딩
