@@ -1,6 +1,5 @@
 import tkinter as tk
 import random
-import time
 
 # 보드 설정 (11x11)
 board = [
@@ -24,7 +23,7 @@ colors = {
     "bottom": "lightcoral",
     "left": "lightgoldenrodyellow",
     "corner": "gray",
-    "default": "black"
+    "default": "white"
 }
 
 class BuruMarbleGame:
@@ -44,6 +43,8 @@ class BuruMarbleGame:
         self.play_order = 1  # 플레이 순서
         self.dice_result = 0  # 주사위 결과
         self.show_result = False  # 주사위 결과 출력 여부
+
+        self.city = []  # 도시 정보를 저장할 리스트
 
         self.create_player_selection()
 
@@ -176,14 +177,14 @@ class BuruMarbleGame:
                 
                 text = board[i][j]
                 if text:
-                    self.canvas.create_text((x1 + x2) / 2, (y1 + y2) / 2, text=text, font=("Helvetica", 12))
+                    self.canvas.create_text((x1 + x2) / 2, (y1 + y2) / 2, text=text, font=("Helvetica", 12), fill="black")
 
         # 플레이어 이름 및 보유 머니 출력
         for idx, (player_name, money) in enumerate(zip(self.players, self.player_money)):
-            self.canvas.create_text(50, 50 + 20 * idx, text=f"{idx + 1}. {player_name} - {money}원", font=("Helvetica", 12), anchor="w")
+            self.canvas.create_text(60, 70 + 40 * idx, text=f"{idx + 1}. {player_name} - {money}원 \n 보유 도시: 없음", font=("Helvetica", 14), anchor="w", fill="black")
 
         # 스페이스바 이벤트 바인딩
-        self.canvas.create_text(440, 700, text=f"플레이어 {self.play_order}번 차례, 스페이스 바를 눌러 주사위를 굴리세요", font=("Helvetica", 16), tags="dice_roll_info")    
+        self.canvas.create_text(440, 700, text=f"플레이어 {self.play_order}번 차례, 스페이스 바를 눌러 주사위를 굴리세요", font=("Helvetica", 16), tags="dice_roll_info", fill="black")    
         
         self.root.bind('<space>', self.roll_dice)
         
@@ -193,10 +194,10 @@ class BuruMarbleGame:
 
         self.result = dice1 + dice2
         print(self.result)
-        result_text = f"주사위 결과: {dice1}, {dice2} (합: {self.result}) / 스페이스 바를 눌러 차례를 넘기세요"
+        result_text = f"주사위 결과: {dice1}, {dice2} (합: {self.result})"
 
         self.canvas.delete("dice_roll_info")
-        self.canvas.create_text(440, 700, text=result_text, font=("Helvetica", 16), tags="dice_result")
+        self.canvas.create_text(440, 700, text=result_text, font=("Helvetica", 16), tags="dice_result", fill="black")
         self.result = 0
 
         self.play_order += 1
@@ -207,7 +208,7 @@ class BuruMarbleGame:
 
     def reset_dice(self):
         self.canvas.delete("dice_result")
-        self.canvas.create_text(440, 700, text=f"플레이어 {self.play_order}번 차례, 스페이스 바를 눌러 주사위를 굴리세요", font=("Helvetica", 16), tags="dice_roll_info")\
+        self.canvas.create_text(440, 700, text=f"플레이어 {self.play_order}번 차례, 스페이스 바를 눌러 주사위를 굴리세요", font=("Helvetica", 16), tags="dice_roll_info", fill="black")
 
 # 게임 실행
 root = tk.Tk()
