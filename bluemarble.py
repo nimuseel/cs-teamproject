@@ -49,6 +49,8 @@ class BuruMarbleGame:
         self.show_result = False  # 주사위 결과 출력 여부
 
         self.city = []  # 도시 정보를 저장할 리스트
+        self.turn_count = 0
+        self.max_turns = 20
 
         player.create_player_selection()
 
@@ -116,6 +118,17 @@ class BuruMarbleGame:
                 self.play_order = 1
 
         self.canvas.after(1500, self.reset_dice)
+
+    def check_winner(self): # 한명 뺴고 모두 파산하거나 20턴 이후 가장 돈이 많은 사람이 승리
+        active_players = [money for money in self.player_money if money > 0]
+
+        if len(active_players) == 1 or self.turn_count >= self.max_turns:
+            max_money = max(self.player_money)
+            winner_index = self.player_money.index(max_money)
+            winner_name = self.players[winner_index]["name"]
+            self.canvas.create_text(440, 440, text=f"게임 종료! 승자: {winner_name}", font=("Helvetica", 24), fill="red")
+            self.root.unbind('<space>')
+
 
     def reset_dice(self):
         self.canvas.delete("dice_result")
