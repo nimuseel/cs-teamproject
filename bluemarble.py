@@ -93,7 +93,7 @@ class BuruMarbleGame:
         
         self.root.bind('<space>', self.roll_dice)
         
-    def roll_dice(self):
+    def roll_dice(self, event):
         dice1 = random.randint(1, 6)
         dice2 = random.randint(1, 6)
         
