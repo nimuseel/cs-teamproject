@@ -193,19 +193,24 @@ class BuruMarbleGame:
     def roll_dice(self, event):
         dice1 = random.randint(1, 6)
         dice2 = random.randint(1, 6)
-
+        
         self.result = dice1 + dice2
+        is_double = dice1 == dice2
+        
         result_text = f"주사위 결과: {dice1}, {dice2} (합: {self.result})"
+        double_text = f"더블! 주사위를 한 번 더 굴리세요"
+        render_text = result_text + double_text if is_double else result_text
 
         self.update_player_info()
 
         self.canvas.delete("dice_roll_info")
-        self.canvas.create_text(440, 700, text=result_text, font=("Helvetica", 16), tags="dice_result", fill="black")
+        self.canvas.create_text(440, 700, text=render_text, font=("Helvetica", 16), tags="dice_result", fill="black")
         self.result = 0
-        
-        self.play_order += 1
-        if (self.play_order > len(self.players)):
-            self.play_order = 1
+
+        if is_double == False:
+            self.play_order += 1
+            if (self.play_order > len(self.players)):
+                self.play_order = 1
 
         self.canvas.after(1500, self.reset_dice)
 
@@ -232,7 +237,6 @@ class BuruMarbleGame:
 
         self.canvas.delete("player_info")
         self.show_player_info()
-        
         
 # 게임 실행
 root = tk.Tk()
