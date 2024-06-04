@@ -110,7 +110,7 @@ class BuruMarbleGame:
 
         self.canvas.delete("dice_roll_info")
         self.canvas.create_text(440, 700, text=render_text, font=("Helvetica", 16), tags="dice_result", fill="black")
-        self.result = 0
+        
 
         if is_double == False:
             self.play_order += 1
@@ -129,8 +129,8 @@ class BuruMarbleGame:
             self.canvas.create_text(440, 440, text=f"게임 종료! 승자: {winner_name}", font=("Helvetica", 24), fill="red")
             self.root.unbind('<space>')
 
-
     def reset_dice(self):
+        self.result = 0
         self.canvas.delete("dice_result")
         self.canvas.create_text(440, 700, text=f"플레이어 {self.play_order}번 차례, 스페이스 바를 눌러 주사위를 굴리세요", font=("Helvetica", 16), tags="dice_roll_info", fill="black")
 
@@ -145,14 +145,24 @@ class BuruMarbleGame:
         
         current_player = self.players[self.play_order - 1]
         next_position_index = current_player.get("currentPosition") + self.result
+
+        is_around_game = next_position_index - 40 > 1
         
-        filtered_board_item = list(filter(lambda x: x.get("index") == next_position_index, flatten_board))[0]
+        if is_around_game == True:
+            filtered_board_item = list(filter(lambda x: x.get("index") == next_position_index - 40, flatten_board))[0]
+            self.player_money[self.play_order - 1] += self.get_start_point_monet()
+        else:
+            filtered_board_item = list(filter(lambda x: x.get("index") == next_position_index , flatten_board))[0]
+        
         
         current_player["currentPosition"] = filtered_board_item.get("index")
         current_player["currentPositionName"] = filtered_board_item.get("name")
 
         self.canvas.delete("player_info")
         self.show_player_info()
+    
+    def get_start_point_monet(self):
+        return 200000
         
 # 게임 실행
 root = tk.Tk()
