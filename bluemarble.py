@@ -118,28 +118,21 @@ class BuruMarbleGame:
             if current_player["uninhabitedIslandCount"] == 3:
                 self.canvas.create_text(440, 700, text=render_text, font=("Helvetica", 16), tags="dice_result", fill="black")
                 current_player["uninhabitedIslandCount"] = 0
+                
                 self.update_player_info()
-
-                self.play_order += 1
-                if (self.play_order > len(self.players)):
-                    self.play_order = 1
+                self.__update_play_order()
             else:
                 if self.is_double == True:
                     self.canvas.create_text(440, 700, text=f"탈출했습니다! {render_text}", font=("Helvetica", 16), tags="dice_result", fill="black")
                     current_player["uninhabitedIslandCount"] = 0
 
                     self.update_player_info()
-
-                    self.play_order += 1
-                    if (self.play_order > len(self.players)):
-                        self.play_order = 1
+                    self.__update_play_order()
                 else:
                     current_player["uninhabitedIslandCount"] = current_player["uninhabitedIslandCount"] + 1
                     self.canvas.create_text(440, 700, text=f"{result_text}. 탈출 실패! 카운트: {current_player["uninhabitedIslandCount"]}", font=("Helvetica", 16), tags="dice_result", fill="black")
 
-                    self.play_order += 1
-                    if (self.play_order > len(self.players)):
-                        self.play_order = 1
+                    self.__update_play_order()
             
             self.canvas.after(1000, self.reset_dice)
         else:
@@ -149,9 +142,7 @@ class BuruMarbleGame:
             self.canvas.create_text(440, 700, text=render_text, font=("Helvetica", 16), tags="dice_result", fill="black")
             
             if self.is_double == False:
-                self.play_order += 1
-                if (self.play_order > len(self.players)):
-                    self.play_order = 1
+                self.__update_play_order()
           
         self.canvas.after(1000, self.reset_dice)
 
@@ -199,7 +190,7 @@ class BuruMarbleGame:
         
         if is_around_game == True:
             filtered_board_item = list(filter(lambda x: x.get("index") == next_position_index - 40, flatten_board))[0]
-            self.player_money[self.play_order - 1] += self.get_start_point_monet()
+            self.player_money[self.play_order - 1] += self.__get_start_point_monet()
         else:
             filtered_board_item = list(filter(lambda x: x.get("index") == next_position_index , flatten_board))[0]
         
@@ -212,9 +203,14 @@ class BuruMarbleGame:
         self.canvas.delete("player_info")
         self.show_player_info()
         
-    def get_start_point_monet(self):
+    def __get_start_point_monet(self):
         return 200000
+    
+    def __update_play_order(self):
+        self.play_order += 1
         
+        if (self.play_order > len(self.players)):
+            self.play_order = 1
 # 게임 실행
 root = tk.Tk()
 app = BuruMarbleGame(root)
