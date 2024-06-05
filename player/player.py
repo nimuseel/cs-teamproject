@@ -57,9 +57,9 @@ class Player:
         for entry in self.player_name_entries:
             name = entry.get()
             if name:
-                self.players.append({ "name": name, "currentPosition": 1, "currentPositionName": "출발지점" })
+                self.players.append({ "name": name, "currentPosition": 1, "currentPositionName": "출발지점", "uninhabitedIslandCount": 0 })
             else:
-                self.players.append({ "name": f"플레이어 {len(self.players) + 1}", "currentPosition": 1, "currentPositionName": "출발지점" })  # 이름을 입력하지 않은 경우 기본 이름 설정
+                self.players.append({ "name": f"플레이어 {len(self.players) + 1}", "currentPosition": 1, "currentPositionName": "출발지점", "uninhabitedIslandCount": 0 })  # 이름을 입력하지 않은 경우 기본 이름 설정
 
         self.name_entry_window.destroy()
         self.label.place_forget()

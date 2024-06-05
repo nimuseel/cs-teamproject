@@ -52,6 +52,8 @@ class BuruMarbleGame:
         self.turn_count = 0
         self.max_turns = 20
 
+        self.is_double = False
+
         player.create_player_selection()
 
     def create_board(self):
@@ -100,24 +102,58 @@ class BuruMarbleGame:
         dice2 = random.randint(1, 6)
         
         self.result = dice1 + dice2
-        is_double = dice1 == dice2
+        self.is_double = dice1 == dice2
+        
+        current_player = self.players[self.play_order - 1]
         
         result_text = f"주사위 결과: {dice1}, {dice2} (합: {self.result})"
         double_text = f"더블! 주사위를 한 번 더 굴리세요"
-        render_text = result_text + double_text if is_double else result_text
-
-        self.update_player_info()
-
-        self.canvas.delete("dice_roll_info")
-        self.canvas.create_text(440, 700, text=render_text, font=("Helvetica", 16), tags="dice_result", fill="black")
+        # 무인도의 index = 11, 주사위를 굴린 결과와 현재 위치를 더한 값이 11이면 무인도로 판단해 더블이 나와도 다음 차례로 넘어감
+        render_text = result_text + double_text if (self.is_double and current_player["currentPosition"] + self.result != 11) else result_text
         
 
-        if is_double == False:
-            self.play_order += 1
-            if (self.play_order > len(self.players)):
-                self.play_order = 1
+        if current_player.get("currentPositionName") == "무인도":
+            self.canvas.delete("uninhabited_island_info")
 
-        self.canvas.after(1500, self.reset_dice)
+            if current_player["uninhabitedIslandCount"] == 3:
+                self.canvas.create_text(440, 700, text=render_text, font=("Helvetica", 16), tags="dice_result", fill="black")
+                current_player["uninhabitedIslandCount"] = 0
+                self.update_player_info()
+
+                self.play_order += 1
+                if (self.play_order > len(self.players)):
+                    self.play_order = 1
+            else:
+                if self.is_double == True:
+                    self.canvas.create_text(440, 700, text=f"탈출했습니다! {render_text}", font=("Helvetica", 16), tags="dice_result", fill="black")
+                    current_player["uninhabitedIslandCount"] = 0
+
+                    self.update_player_info()
+
+                    self.play_order += 1
+                    if (self.play_order > len(self.players)):
+                        self.play_order = 1
+                else:
+                    current_player["uninhabitedIslandCount"] = current_player["uninhabitedIslandCount"] + 1
+                    self.canvas.create_text(440, 700, text=f"{result_text}. 탈출 실패! 카운트: {current_player["uninhabitedIslandCount"]}", font=("Helvetica", 16), tags="dice_result", fill="black")
+
+                    self.play_order += 1
+                    if (self.play_order > len(self.players)):
+                        self.play_order = 1
+            
+            self.canvas.after(1000, self.reset_dice)
+        else:
+            self.update_player_info()
+
+            self.canvas.delete("dice_roll_info")
+            self.canvas.create_text(440, 700, text=render_text, font=("Helvetica", 16), tags="dice_result", fill="black")
+            
+            if self.is_double == False:
+                self.play_order += 1
+                if (self.play_order > len(self.players)):
+                    self.play_order = 1
+          
+        self.canvas.after(1000, self.reset_dice)
 
     def check_winner(self): # 한명 뺴고 모두 파산하거나 20턴 이후 가장 돈이 많은 사람이 승리
         active_players = [money for money in self.player_money if money > 0]
@@ -132,13 +168,24 @@ class BuruMarbleGame:
     def reset_dice(self):
         self.result = 0
         self.canvas.delete("dice_result")
-        self.canvas.create_text(440, 700, text=f"플레이어 {self.play_order}번 차례, 스페이스 바를 눌러 주사위를 굴리세요", font=("Helvetica", 16), tags="dice_roll_info", fill="black")
+
+        current_player = self.players[self.play_order - 1]
+
+        escape_info_text = f"플레이어 {self.play_order}번 차례, 무인도에 갇혀 더블이 나오거나, 세 번 주사위를 굴리면 탈출할 수 있습니다."
+        lets_escape_text = f"플레이어 {self.play_order}번 차례, 스페이스 바를 눌러 무인도를 탈출하세요."
+
+        uninhabited_island_info_render_text = lets_escape_text if current_player["uninhabitedIslandCount"] == 3 else escape_info_text
+
+        if current_player.get("currentPositionName") == "무인도":
+            self.canvas.create_text(440, 700, text=uninhabited_island_info_render_text, font=("Helvetica", 16), tags="uninhabited_island_info", fill="black")
+        else:
+            self.canvas.create_text(440, 700, text=f"플레이어 {self.play_order}번 차례, 스페이스 바를 눌러 주사위를 굴리세요", font=("Helvetica", 16), tags="dice_roll_info", fill="black")
 
     def show_player_info(self):
         for idx, (player, money) in enumerate(zip(self.players, self.player_money)):
             player_name = dict(player)["name"]
             current_player_position_name = dict(player)["currentPositionName"]
-            self.canvas.create_text(60, 70 + 50 * idx, text=f"{idx + 1}. {player_name} - {money}원 \n 보유 도시: 없음 \n 현재 위치: {current_player_position_name}", font=("Helvetica", 14), anchor="w", fill="black", tags="player_info")
+            self.canvas.create_text(100, 120 + 70 * idx, text=f"{idx + 1}. {player_name} - {money}원 \n 보유 도시: 없음 \n 현재 위치: {current_player_position_name}", font=("Helvetica", 14), anchor="w", fill="black", tags="player_info")
 
     def update_player_info(self):
         flatten_board = Utils.flatted_board(board)
@@ -146,7 +193,9 @@ class BuruMarbleGame:
         current_player = self.players[self.play_order - 1]
         next_position_index = current_player.get("currentPosition") + self.result
 
-        is_around_game = next_position_index - 40 > 1
+        is_around_game = next_position_index - 40 >= 1
+
+        filtered_board_item = None
         
         if is_around_game == True:
             filtered_board_item = list(filter(lambda x: x.get("index") == next_position_index - 40, flatten_board))[0]
@@ -154,13 +203,15 @@ class BuruMarbleGame:
         else:
             filtered_board_item = list(filter(lambda x: x.get("index") == next_position_index , flatten_board))[0]
         
-        
         current_player["currentPosition"] = filtered_board_item.get("index")
         current_player["currentPositionName"] = filtered_board_item.get("name")
 
+        if current_player["currentPositionName"] == "무인도":
+            self.is_double = False
+
         self.canvas.delete("player_info")
         self.show_player_info()
-    
+        
     def get_start_point_monet(self):
         return 200000
         
