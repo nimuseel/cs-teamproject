@@ -43,6 +43,7 @@ class BuruMarbleGame:
 
         self.players = player.players
         self.player_money = player.player_money
+        self.community_chest_fund = 0
 
         self.play_order = 1  # 플레이 순서
         self.dice_result = 0  # 주사위 결과
@@ -130,8 +131,8 @@ class BuruMarbleGame:
                     self.__update_play_order()
                 else:
                     current_player["uninhabitedIslandCount"] = current_player["uninhabitedIslandCount"] + 1
-                    self.canvas.create_text(440, 700, text=f"{result_text}. 탈출 실패! 카운트: {current_player["uninhabitedIslandCount"]}", font=("Helvetica", 16), tags="dice_result", fill="black")
-
+                    self.canvas.create_text(440, 700, text=f'{result_text}. 탈출 실패! 카운트: {current_player["uninhabitedIslandCount"]}', font=("Helvetica", 16), tags="dice_result", fill="black")
+                    
                     self.__update_play_order()
             
             self.canvas.after(1000, self.reset_dice)
@@ -156,6 +157,39 @@ class BuruMarbleGame:
             self.canvas.create_text(440, 440, text=f"게임 종료! 승자: {winner_name}", font=("Helvetica", 24), fill="red")
             self.root.unbind('<space>')
 
+    def random_gimick(self):
+        current_player = self.players[self.play_order - 1] # 현재 플레이어
+        current_money = self.player_money[self.play_order - 1] # 현재 플레이어의 금액
+        gimick_type = random.choice(["move", "gain", "lose"])
+
+        if gimick_type == "move":
+            teleport = random.choice([1, 11, 21, 31]) # 출발지, 무인도, 우주여행, 사회복지기금
+            current_player["currentPosition"] = teleport
+            current_player["currentPositionName"] = next(item["name"] for item in Utils.flatted_board if item["index"] == teleport)
+            result_text = f"{current_player['name']}님이 {current_player['currentPositionName']}으로 이동합니다."
+
+        elif gimick_type == "gain":
+            gain_money = int(0.2 * current_money) # 현재 금액의 20%
+            self.player_money[self.play_order - 1] += gain_money
+            result_text = f"{current_player['name']}님이 {gain_money}원을 받습니다."
+
+        elif gimick_type == "lose":
+            lose_money = int(0.2 * current_money) # 현재 금액의 20%
+            self.player_money[self.play_order - 1] -= lose_money
+            result_text = f"{current_player['name']}님이 {lose_money}원을 잃습니다."
+
+        self.canvas.delete("gimick_result")
+        self.canvas.create_text(440, 740, text=result_text, font=("Helvetica", 16), tags="gimick_result", fill="blank")
+
+    def gain_community_chest_fund(self, player_index):
+        self.player_money[player_index] += self.community_chest_fund
+        self.community_chest_fund = 0 # 사회복지기금 초기화
+
+    def lose_community_chest_fund(self):
+        amount = int(0.2 * self.player_money[self.play_order - 1]) # 현재 금액의 20%
+        self.player_money[self.play_order - 1] -= amount
+        self.community_chest_fund += amount
+    
     def reset_dice(self):
         self.result = 0
         self.canvas.delete("dice_result")
@@ -202,6 +236,15 @@ class BuruMarbleGame:
 
         self.canvas.delete("player_info")
         self.show_player_info()
+
+        if current_player["currentPositionName"] == "황금열쇠":
+            self.random_gimick()
+
+        if current_player["currentPositionName"] == "사회복지\n기금":
+            if current_player["currentPosition"] == 21: # 사회복지기금 회수
+                self.gain_community_chest_fund(self.play_order -1)
+            elif current_player["currentPosition"] == 39: #사회복지기금에 기부
+                self.lose_community_chest_fund()
         
     def __get_start_point_monet(self):
         return 200000

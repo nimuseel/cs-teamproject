@@ -89,7 +89,7 @@ class Player:
 
             dict_player = dict(player)
 
-            tk.Label(frame, text=f"{dict_player["name"]}의 초기 머니:", font=("Helvetica", 10)).pack(side="left")
+            tk.Label(frame, text=f"{dict_player['name']}의 초기 머니:", font=("Helvetica", 10)).pack(side="left")
             entry = tk.Entry(frame, font=("Helvetica", 10))
             entry.pack(side="left")
             self.money_entries.append(entry)
