@@ -181,8 +181,8 @@ class BuruMarbleGame:
         self.canvas.delete("gimick_result")
         self.canvas.create_text(440, 740, text=result_text, font=("Helvetica", 16), tags="gimick_result", fill="blank")
 
-    def gain_community_chest_fund(self, player_index):
-        self.player_money[player_index] += self.community_chest_fund
+    def gain_community_chest_fund(self):
+        self.player_money[self.play_order - 1] += self.community_chest_fund
         self.community_chest_fund = 0 # 사회복지기금 초기화
 
     def lose_community_chest_fund(self):
@@ -242,8 +242,8 @@ class BuruMarbleGame:
 
         if current_player["currentPositionName"] == "사회복지\n기금":
             if current_player["currentPosition"] == 21: # 사회복지기금 회수
-                self.gain_community_chest_fund(self.play_order -1)
-            elif current_player["currentPosition"] == 39: #사회복지기금에 기부
+                self.gain_community_chest_fund()
+            elif current_player["currentPosition"] == 39: # 사회복지기금 기부
                 self.lose_community_chest_fund()
         
     def __get_start_point_monet(self):
