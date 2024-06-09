@@ -256,7 +256,7 @@ class BuruMarbleGame:
             if columbia_owner and columbia_owner != player:
                 player['money'] -= 200000
                 columbia_owner['money'] += 200000
-            else:
+            elif columbia_owner != player:
                 player['money'] -= 200000
 
             self.space_travel_player = player  # 우주여행을 실행한 플레이어를 추적
