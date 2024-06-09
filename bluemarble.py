@@ -237,7 +237,7 @@ class BuruMarbleGame:
                 if city.get_owner() != current_player:
                     city.pay_toll(current_player)
                     owner_name = city.get_owner()["name"]
-                    messagebox.showinfo("통행료 지불", f"{current_player['name']}님이 {owner_name}님에게 {city.get_toll()}원을 지불하였습니다.")
+                    messagebox.showinfo("통행료 지불", f"{current_player['name']}님이 {owner_name}님에게 {city.get_name()} 도시의 통행료 {city.get_toll()}원을 지불하였습니다.")
                     self.show_player_info()
 
     def get_city(self, city_name):
