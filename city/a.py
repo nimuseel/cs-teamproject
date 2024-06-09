@@ -1,31 +1,35 @@
 class City:
-    def __init__(self, name, price):
+    def __init__(self, name):
         self.name = name
-        self.price = price
+        self.price = 100000  # 도시 가격을 10만원으로 고정
         self.owner = None
 
-    def Set_owner(self, owner):
+    def set_owner(self, owner):
         self.owner = owner
 
-    def Get_owner(self):
+    def get_owner(self):
         return self.owner
 
-    def Get_name(self):
+    def get_name(self):
         return self.name
 
-    def Get_price(self):
+    def get_price(self):
         return self.price
 
-    def Buy_city(self, player):
-        if self.owner is None:
+    def buy_city(self, player):
+        if self.owner is None and player['money'] >= self.price:
             self.owner = player
+            player['money'] -= self.price
+            player['cities'].append(self)
             return True
         else:
             return False
 
-    def Sell_city(self):
-        if self.owner is not None:
+    def sell_city(self, player):
+        if self.owner == player:
             self.owner = None
+            player.money += self.price
+            player.cities.remove(self)
             return True
         else:
             return False

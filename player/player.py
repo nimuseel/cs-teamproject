@@ -1,12 +1,12 @@
 import tkinter as tk
 
+import tkinter as tk
+
 class Player:
     def __init__(self, root, game_start_fn):
         self.root = root
 
-        self.players = []  # 플레이어들의 이름을 저장할 리스트
-        self.player_money = []  # 플레이어들의 보유 머니를 저장할 리스트
-
+        self.players = []  # 플레이어들의 정보(이름, 금액, 소유 도시 등)를 저장할 리스트
         self.play_order = 1  # 플레이 순서
 
         self.game_start = game_start_fn
@@ -57,9 +57,9 @@ class Player:
         for entry in self.player_name_entries:
             name = entry.get()
             if name:
-                self.players.append({ "name": name, "currentPosition": 1, "currentPositionName": "출발지점", "uninhabitedIslandCount": 0 })
+                self.players.append({ "name": name, "currentPosition": 1, "currentPositionName": "출발지점", "uninhabitedIslandCount": 0, "money": 2000000, "cities": [] })
             else:
-                self.players.append({ "name": f"플레이어 {len(self.players) + 1}", "currentPosition": 1, "currentPositionName": "출발지점", "uninhabitedIslandCount": 0 })  # 이름을 입력하지 않은 경우 기본 이름 설정
+                self.players.append({ "name": f"플레이어 {len(self.players) + 1}", "currentPosition": 1, "currentPositionName": "출발지점", "uninhabitedIslandCount": 0, "money": 2000000, "cities": [] })  # 이름을 입력하지 않은 경우 기본 이름 설정
 
         self.name_entry_window.destroy()
         self.label.place_forget()
@@ -67,6 +67,7 @@ class Player:
         self.start_button.place_forget()
 
         self.__get_player_money()
+
     def __get_player_money(self):
         self.money_entry_window = tk.Toplevel(self.root)
         self.money_entry_window.title("초기 머니 설정")
@@ -87,9 +88,7 @@ class Player:
             frame = tk.Frame(self.money_entry_window)
             frame.pack(pady=5)
 
-            dict_player = dict(player)
-
-            tk.Label(frame, text=f"{dict_player['name']}의 초기 머니:", font=("Helvetica", 10)).pack(side="left")
+            tk.Label(frame, text=f"{player['name']}의 초기 머니:", font=("Helvetica", 10)).pack(side="left")
             entry = tk.Entry(frame, font=("Helvetica", 10))
             entry.pack(side="left")
             self.money_entries.append(entry)
@@ -97,15 +96,18 @@ class Player:
         tk.Button(self.money_entry_window, text="확인", command=self.__save_player_money).pack(pady=20)
 
     def __save_player_money(self):
-        for entry in self.money_entries:
+        for i, entry in enumerate(self.money_entries):
             if self.auto_money.get():
-                self.player_money.append(2000000)  # 200만원 자동 설정
+                self.players[i]['money'] = 2000000  # 200만원 자동 설정
             else:
                 try:
                     money = int(entry.get())
-                    self.player_money.append(money)
+                    self.players[i]['money'] = money
                 except ValueError:
-                    self.player_money.append(2000000)  # 입력값이 유효하지 않으면 200만원으로 설정
+                    self.players[i]['money'] = 2000000  # 입력값이 유효하지 않으면 200만원으로 설정
 
         self.money_entry_window.destroy()
         self.game_start()
+
+    def start_game(self):
+        self.game_start(self.players)
