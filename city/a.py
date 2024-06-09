@@ -1,6 +1,7 @@
 class City:
-    def __init__(self, name):
+    def __init__(self, name, index):
         self.name = name
+        self.index = index
         self.price = 100000  # 도시 가격을 10만원으로 고정
         self.toll = 50000  # 통행료를 5만원으로 설정
         self.owner = None
@@ -13,6 +14,9 @@ class City:
 
     def get_name(self):
         return self.name
+
+    def get_index(self):
+        return self.index
 
     def get_price(self):
         return self.price

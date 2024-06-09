@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, Toplevel, Listbox, END
 import random
 from utils import Utils
 from player.player import Player
@@ -55,6 +55,7 @@ class BuruMarbleGame:
         self.max_turns = 20
 
         self.is_double = False
+        self.space_travel_player = None  # 우주여행을 실행한 플레이어를 추적하기 위한 변수
 
         player.create_player_selection()
 
@@ -100,6 +101,12 @@ class BuruMarbleGame:
         self.root.bind('<space>', self.roll_dice)
         
     def roll_dice(self, event):
+        if self.space_travel_player == self.players[self.play_order - 1]:
+            self.show_city_selection(self.players[self.play_order - 1])
+        else:
+            self.__roll_dice_logic(event)
+
+    def __roll_dice_logic(self, event):
         dice1 = random.randint(1, 6)
         dice2 = random.randint(1, 6)
         
@@ -229,6 +236,8 @@ class BuruMarbleGame:
                 self.gain_community_chest_fund()
             elif current_player["currentPosition"] == 39:  # 사회복지기금 기부
                 self.lose_community_chest_fund()
+        elif current_player["currentPositionName"] == "우주여행":
+            self.ask_for_space_travel(current_player)
         elif current_player["currentPositionName"] not in ["출발지점", "무인도"]:
             city = self.get_city(current_player["currentPositionName"])
             if city.get_owner() is None and city.is_buyable():
@@ -240,12 +249,30 @@ class BuruMarbleGame:
                     messagebox.showinfo("통행료 지불", f"{current_player['name']}님이 {owner_name}님에게 {city.get_name()} 도시의 통행료 {city.get_toll()}원을 지불하였습니다.")
                     self.show_player_info()
 
+    def ask_for_space_travel(self, player):
+        response = messagebox.askyesno("우주여행", "우주여행을 하시겠습니까?")
+        if response:
+            columbia_owner = self.get_city("콜롬비아호").get_owner()
+            if columbia_owner and columbia_owner != player:
+                player['money'] -= 200000
+                columbia_owner['money'] += 200000
+            else:
+                player['money'] -= 200000
+
+            self.space_travel_player = player  # 우주여행을 실행한 플레이어를 추적
+            messagebox.showinfo("우주여행", "다음 턴에 원하는 도시로 이동할 수 있습니다.")
+        self.show_player_info()
+
     def get_city(self, city_name):
         for player in self.players:
             for city in player["cities"]:
                 if city.get_name() == city_name:
                     return city
-        return City(city_name)
+        flat_board = Utils.flatted_board(board)
+        for item in flat_board:
+            if item["name"] == city_name:
+                return City(city_name, item["index"])
+        return City(city_name, -1)
 
     def __get_start_point_money(self):
         return 200000
@@ -266,6 +293,32 @@ class BuruMarbleGame:
                 messagebox.showinfo("구매 취소", "도시 구매를 취소하였습니다.")
         else:
             messagebox.showinfo("구매 불가", f"{city.get_name()} 도시는 이미 다른 플레이어가 소유하고 있거나 구매할 수 없습니다.")
+
+    def show_city_selection(self, player):
+        def on_select_city():
+            selected_city_name = city_listbox.get(city_listbox.curselection())
+            selected_city = self.get_city(selected_city_name)
+            player["currentPosition"] = selected_city.get_index()
+            player["currentPositionName"] = selected_city_name
+            self.space_travel_player = None  # 우주여행 상태 초기화
+            city_selection_window.destroy()
+            self.show_player_info()
+
+        city_selection_window = Toplevel(self.root)
+        city_selection_window.title("도시 선택")
+        city_selection_window.geometry("300x350")  # 팝업창 크기 조정
+        city_listbox = Listbox(city_selection_window, width=40, height=15)  # 리스트박스 크기 조정
+        city_listbox.pack(pady=10)
+
+        flat_board = Utils.flatted_board(board)
+        for item in flat_board:
+            if item["name"] not in ["출발지점", "무인도", "우주여행"]:
+                city_listbox.insert(END, item["name"])
+
+        select_button = tk.Button(city_selection_window, text="선택", command=on_select_city)
+        select_button.pack(pady=10)
+
+            
 # 게임 실행
 root = tk.Tk()
 app = BuruMarbleGame(root)
