@@ -1,7 +1,5 @@
 import tkinter as tk
 
-import tkinter as tk
-
 class Player:
     def __init__(self, root, game_start_fn):
         self.root = root

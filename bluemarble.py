@@ -229,10 +229,23 @@ class BuruMarbleGame:
                 self.gain_community_chest_fund()
             elif current_player["currentPosition"] == 39:  # 사회복지기금 기부
                 self.lose_community_chest_fund()
-        else:
-            city = City(current_player["currentPositionName"])
-            if city.get_owner() is None:
+        elif current_player["currentPositionName"] not in ["출발지점", "무인도"]:
+            city = self.get_city(current_player["currentPositionName"])
+            if city.get_owner() is None and city.is_buyable():
                 self.ask_to_buy_city(current_player, city)
+            else:
+                if city.get_owner() != current_player:
+                    city.pay_toll(current_player)
+                    owner_name = city.get_owner()["name"]
+                    messagebox.showinfo("통행료 지불", f"{current_player['name']}님이 {owner_name}님에게 {city.get_toll()}원을 지불하였습니다.")
+                    self.show_player_info()
+
+    def get_city(self, city_name):
+        for player in self.players:
+            for city in player["cities"]:
+                if city.get_name() == city_name:
+                    return city
+        return City(city_name)
 
     def __get_start_point_money(self):
         return 200000
@@ -243,13 +256,16 @@ class BuruMarbleGame:
             self.play_order = 1
 
     def ask_to_buy_city(self, player, city):
-        response = messagebox.askyesno("도시 구매", f"{city.get_name()} 도시를 {city.get_price()}원에 구매하시겠습니까?")
-        if response:
-            city.buy_city(player)
-            messagebox.showinfo("구매 완료", f"{city.get_name()} 도시를 구매하였습니다.")
-            self.show_player_info()  # 플레이어 정보 업데이트
+        if city.get_owner() is None and city.is_buyable():
+            response = messagebox.askyesno("도시 구매", f"{city.get_name()} 도시를 {city.get_price()}원에 구매하시겠습니까?")
+            if response:
+                city.buy_city(player)
+                messagebox.showinfo("구매 완료", f"{city.get_name()} 도시를 구매하였습니다.")
+                self.show_player_info()  # 플레이어 정보 업데이트
+            else:
+                messagebox.showinfo("구매 취소", "도시 구매를 취소하였습니다.")
         else:
-            messagebox.showinfo("구매 취소", "도시 구매를 취소하였습니다.")
+            messagebox.showinfo("구매 불가", f"{city.get_name()} 도시는 이미 다른 플레이어가 소유하고 있거나 구매할 수 없습니다.")
 # 게임 실행
 root = tk.Tk()
 app = BuruMarbleGame(root)
