@@ -2,8 +2,8 @@ class City:
     def __init__(self, name, index):
         self.name = name
         self.index = index
-        self.price = 100000  # 도시 가격을 10만원으로 고정
-        self.toll = 50000  # 통행료를 5만원으로 설정
+        self.price = 100000  # 도시가격은 일단 10만원으로 고정해두고, 내일 바꾸자..
+        self.toll = 500000  # 통행료도 일단 테스트를 위해 50만원으로 고정해두고, 도시별로 설정하는거 구현하자.
         self.owner = None
 
     def set_owner(self, owner):
@@ -49,8 +49,7 @@ class City:
                 self.owner['money'] += self.toll
                 return True
             else:
-                # 플레이어가 통행료를 지불할 돈이 없는 경우
-                player['money'] = 0  # 남은 돈을 모두 지불
+                player['money'] = 0
                 self.owner['money'] += player['money']
                 return True
         return False

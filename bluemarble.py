@@ -3,7 +3,7 @@ from tkinter import messagebox, Toplevel, Listbox, END
 import random
 from utils import Utils
 from player.player import Player
-from city.a import City
+from city.city import City
 
 # 보드 설정 (11x11)
 board = [
@@ -244,9 +244,7 @@ class BuruMarbleGame:
                 self.ask_to_buy_city(current_player, city)
             else:
                 if city.get_owner() != current_player:
-                    city.pay_toll(current_player)
-                    owner_name = city.get_owner()["name"]
-                    messagebox.showinfo("통행료 지불", f"{current_player['name']}님이 {owner_name}님에게 {city.get_name()} 도시의 통행료 {city.get_toll()}원을 지불하였습니다.")
+                    self.pay_toll_with_city_sell(current_player, city.get_owner(), city.get_toll())
                     self.show_player_info()
 
     def ask_for_space_travel(self, player):
@@ -337,9 +335,7 @@ class BuruMarbleGame:
                 self.ask_to_buy_city(player, city)
             else:
                 if city.get_owner() != player:
-                    city.pay_toll(player)
-                    owner_name = city.get_owner()["name"]
-                    messagebox.showinfo("통행료 지불", f"{player['name']}님이 {owner_name}님에게 {city.get_name()} 도시의 통행료 {city.get_toll()}원을 지불하였습니다.")
+                    self.pay_toll_with_city_sell(player, city.get_owner(), city.get_toll())
             self.show_player_info()
 
     def execute_special_action(self, action_name):
@@ -353,7 +349,56 @@ class BuruMarbleGame:
                 self.lose_community_chest_fund()
         self.show_player_info()
 
+    def show_city_sell_popup(self, player, required_amount):
+        def on_submit():
+            selected_city_name = city_listbox.get(city_listbox.curselection())
+            selected_city = self.get_city(selected_city_name)
+            if selected_city.sell_city(player):
+                player['money'] += selected_city.get_price()
+            popup.destroy()
+
+        popup = Toplevel(self.root)
+        popup.title("Sell City")
+        tk.Label(popup, text=f"{player['name']}님, 통행료가 부족하여 도시를 판매해야 합니다.").pack()
+        tk.Label(popup, text=f"필요한 금액: {required_amount} - 소유 금액: {player['money']}").pack()
+        
+        city_listbox = Listbox(popup)
+        for city in player['cities']:
+            city_listbox.insert(END, city.get_name())
+        city_listbox.pack()
+        
+        tk.Button(popup, text="Sell City", command=on_submit).pack()
+
+        self.root.wait_window(popup)
+
+    def pay_toll_with_city_sell(self, player, owner, toll_amount):
+        self.bankrupt_flag = False
+        if player['money'] >= toll_amount:
+            player['money'] -= toll_amount
+            owner['money'] += toll_amount
+            messagebox.showinfo("통행료 지불 완료", f"{player['name']}님이 {owner['name']}님에게 {toll_amount}원을 지불했습니다.")
+        else:
+            total_paid = player['money']
+            player['money'] = 0
+
+            while total_paid < toll_amount and player['cities']:
+                required_amount = toll_amount - total_paid
+                self.show_city_sell_popup(player, required_amount)
+                total_paid += player['money']
             
+            if total_paid >= toll_amount:
+                player['money'] -= (total_paid - toll_amount)
+                owner['money'] += toll_amount
+                messagebox.showinfo("통행료 지불 완료", f"{player['name']}님이 {owner['name']}님에게 {toll_amount}원을 지불했습니다.")
+            else:
+                owner['money'] += total_paid
+                if not player['cities'] and player['money'] < toll_amount:
+                    messagebox.showinfo("파산", f"{player['name']}님이 {owner['name']}님에게 {total_paid}원을 지불하고 파산했습니다.")
+                    player['money'] = 0
+                    self.bankrupt_flag = True
+                else:
+                    messagebox.showinfo("통행료 지불 완료", f"{player['name']}님이 {owner['name']}님에게 {total_paid}원을 지불했습니다.")
+
 # 게임 실행
 root = tk.Tk()
 app = BuruMarbleGame(root)
