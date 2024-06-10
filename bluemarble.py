@@ -250,14 +250,19 @@ class BuruMarbleGame:
                     self.show_player_info()
 
     def ask_for_space_travel(self, player):
+        space_travel_cost = 400000
+        if player['money'] < space_travel_cost:
+            messagebox.showinfo("우주여행 불가", f"소유한 돈이 부족하여 우주여행을 할 수 없습니다. (필요 금액: {space_travel_cost}원)")
+            return
+
         response = messagebox.askyesno("우주여행", "우주여행을 하시겠습니까?")
         if response:
             columbia_owner = self.get_city("콜롬비아호").get_owner()
             if columbia_owner and columbia_owner != player:
-                player['money'] -= 200000
-                columbia_owner['money'] += 200000
+                player['money'] -= space_travel_cost
+                columbia_owner['money'] += space_travel_cost
             elif columbia_owner != player:
-                player['money'] -= 200000
+                player['money'] -= space_travel_cost
 
             self.space_travel_player = player  # 우주여행을 실행한 플레이어를 추적
             messagebox.showinfo("우주여행", "다음 턴에 원하는 도시로 이동할 수 있습니다.")
@@ -284,13 +289,16 @@ class BuruMarbleGame:
 
     def ask_to_buy_city(self, player, city):
         if city.get_owner() is None and city.is_buyable():
-            response = messagebox.askyesno("도시 구매", f"{city.get_name()} 도시를 {city.get_price()}원에 구매하시겠습니까?")
-            if response:
-                city.buy_city(player)
-                messagebox.showinfo("구매 완료", f"{city.get_name()} 도시를 구매하였습니다.")
-                self.show_player_info()  # 플레이어 정보 업데이트
+            if player['money'] >= city.get_price():
+                response = messagebox.askyesno("도시 구매", f"{city.get_name()} 도시를 {city.get_price()}원에 구매하시겠습니까?")
+                if response:
+                    city.buy_city(player)
+                    messagebox.showinfo("구매 완료", f"{city.get_name()} 도시를 구매하였습니다.")
+                    self.show_player_info()  # 플레이어 정보 업데이트
+                else:
+                    messagebox.showinfo("구매 취소", "도시 구매를 취소하였습니다.")
             else:
-                messagebox.showinfo("구매 취소", "도시 구매를 취소하였습니다.")
+                messagebox.showinfo("구매 불가", f"소유한 돈이 부족하여 {city.get_name()} 도시를 구매할 수 없습니다.")
         else:
             messagebox.showinfo("구매 불가", f"{city.get_name()} 도시는 이미 다른 플레이어가 소유하고 있거나 구매할 수 없습니다.")
 
