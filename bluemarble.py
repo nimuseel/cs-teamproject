@@ -238,7 +238,7 @@ class BuruMarbleGame:
                 self.lose_community_chest_fund()
         elif current_player["currentPositionName"] == "우주여행":
             self.ask_for_space_travel(current_player)
-        elif current_player["currentPositionName"] not in ["출발지점", "무인도"]:
+        elif current_player["currentPositionName"] not in ["출발지점", "무인도", "황금열쇠", "사회복지\n기금"]:
             city = self.get_city(current_player["currentPositionName"])
             if city.get_owner() is None and city.is_buyable():
                 self.ask_to_buy_city(current_player, city)
@@ -303,6 +303,7 @@ class BuruMarbleGame:
             self.space_travel_player = None  # 우주여행 상태 초기화
             city_selection_window.destroy()
             self.show_player_info()
+            self.perform_city_action(player)  # 이동 후 도시 관련 행동 수행
 
         city_selection_window = Toplevel(self.root)
         city_selection_window.title("도시 선택")
@@ -312,11 +313,37 @@ class BuruMarbleGame:
 
         flat_board = Utils.flatted_board(board)
         for item in flat_board:
-            if item["name"] not in ["출발지점", "무인도", "우주여행"]:
+            if item["name"] not in ["우주여행"]:
                 city_listbox.insert(END, item["name"])
 
         select_button = tk.Button(city_selection_window, text="선택", command=on_select_city)
         select_button.pack(pady=10)
+
+    def perform_city_action(self, player):
+        city_name = player["currentPositionName"]
+        if city_name in ["출발지점", "무인도", "황금열쇠", "사회복지\n기금"]:
+            self.execute_special_action(city_name)
+        else:
+            city = self.get_city(city_name)
+            if city.get_owner() is None and city.is_buyable():
+                self.ask_to_buy_city(player, city)
+            else:
+                if city.get_owner() != player:
+                    city.pay_toll(player)
+                    owner_name = city.get_owner()["name"]
+                    messagebox.showinfo("통행료 지불", f"{player['name']}님이 {owner_name}님에게 {city.get_name()} 도시의 통행료 {city.get_toll()}원을 지불하였습니다.")
+            self.show_player_info()
+
+    def execute_special_action(self, action_name):
+        current_player = self.players[self.play_order - 1]
+        if action_name == "황금열쇠":
+            self.random_gimick()
+        elif action_name == "사회복지\n기금":
+            if current_player["currentPosition"] == 21:
+                self.gain_community_chest_fund()
+            elif current_player["currentPosition"] == 39:
+                self.lose_community_chest_fund()
+        self.show_player_info()
 
             
 # 게임 실행
