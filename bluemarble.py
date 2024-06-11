@@ -417,9 +417,12 @@ class BuruMarbleGame:
             player["currentPosition"] = selected_city.get_index()
             player["currentPositionName"] = selected_city_name
             self.space_travel_player = None  # 우주여행 상태 초기화
+            self.root.bind('<space>', self.roll_dice)
             city_selection_window.destroy()
             self.show_player_info()
             self.perform_city_action(player)  # 이동 후 도시 관련 행동 수행
+
+        self.root.unbind('<space>')
 
         city_selection_window = Toplevel(self.root)
         city_selection_window.title("도시 선택")
@@ -434,6 +437,8 @@ class BuruMarbleGame:
 
         select_button = tk.Button(city_selection_window, text="선택", command=on_select_city)
         select_button.pack(pady=10)
+
+        self.root.wait_window(city_selection_window)
 
     def perform_city_action(self, player):
         city_name = player["currentPositionName"]
