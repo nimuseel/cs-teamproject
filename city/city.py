@@ -1,9 +1,9 @@
 class City:
-    def __init__(self, name, index):
+    def __init__(self, name, index, price, toll):
         self.name = name
         self.index = index
-        self.price = 100000  # 도시가격은 일단 10만원으로 고정해두고, 내일 바꾸자..
-        self.toll = 500000  # 통행료도 일단 테스트를 위해 50만원으로 고정해두고, 도시별로 설정하는거 구현하자.
+        self.price = price
+        self.toll = toll
         self.owner = None
 
     def set_owner(self, owner):

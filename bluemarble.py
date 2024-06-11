@@ -7,17 +7,127 @@ from city.city import City
 
 # 보드 설정 (11x11)
 board = [
-    [{'name': '출발지점', 'index': 1}, {'name': '타이베이', 'index': 2}, {'name': '황금열쇠', 'index': 3}, {'name': '베이징', 'index': 4}, {'name': '마닐라', 'index': 5}, {'name': '제주도', 'index': 6}, {'name': '싱가포르', 'index': 7}, {'name': '황금열쇠', 'index': 8}, {'name': '카이로', 'index': 9}, {'name': '이스탄불', 'index': 10}, {'name': '무인도', 'index': 11}],
-    [{'name': '서울', 'index': 40}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '아테네', 'index': 12}],
-    [{'name': '사회복지\n기금', 'index': 39}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '황금열쇠', 'index': 13}],
-    [{'name': '뉴욕', 'index': 38}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '코펜하겐', 'index': 14}],
-    [{'name': '런던', 'index': 37}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '스톡홀름', 'index': 15}],
-    [{'name': '황금열쇠', 'index': 36}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '콩고드\n여객기', 'index': 16}],
-    [{'name': '로마', 'index': 35}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '취리히', 'index': 17}],
-    [{'name': '파리', 'index': 34}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '황금열쇠', 'index': 18}],
-    [{'name': '콜롬비아호', 'index': 33}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '베를린', 'index': 19}],
-    [{'name': '도쿄', 'index': 32}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '', 'index': 0}, {'name': '몬트리올', 'index': 20}],
-    [{'name': '우주여행', 'index': 31}, {'name': '마드리드', 'index': 30}, {'name': '퀸 엘리자\n베스호', 'index': 29}, {'name': '리스본', 'index': 28}, {'name': '하와이', 'index': 27}, {'name': '부산', 'index': 26}, {'name': '시드니', 'index': 25}, {'name': '상파울로', 'index': 24}, {'name': '황금열쇠', 'index': 23}, {'name': '부에노스\n아이레스', 'index': 22}, {'name': '사회복지\n기금', 'index': 21}]
+    [{'name': '출발지점', 'index': 1, 'price': 0, 'toll': 0},
+     {'name': '타이베이', 'index': 2, 'price': 300000, 'toll': 300000},
+     {'name': '황금열쇠', 'index': 3, 'price': 0, 'toll': 0},
+     {'name': '베이징', 'index': 4, 'price': 350000, 'toll': 350000},
+     {'name': '마닐라', 'index': 5, 'price': 250000, 'toll': 250000},
+     {'name': '제주도', 'index': 6, 'price': 200000, 'toll': 200000},
+     {'name': '싱가포르', 'index': 7, 'price': 400000, 'toll': 40000},
+     {'name': '황금열쇠', 'index': 8, 'price': 0, 'toll': 0},
+     {'name': '카이로', 'index': 9, 'price': 300000, 'toll': 300000},
+     {'name': '이스탄불', 'index': 10, 'price': 350000, 'toll': 350000},
+     {'name': '무인도', 'index': 11, 'price': 0, 'toll': 0}],
+    [{'name': '서울', 'index': 40, 'price': 1000000, 'toll': 100000},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '아테네', 'index': 12, 'price': 300000, 'toll': 300000}],
+    [{'name': '사회복지\n기금', 'index': 39, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '황금열쇠', 'index': 13, 'price': 0, 'toll': 0}],
+    [{'name': '뉴욕', 'index': 38, 'price': 800000, 'toll': 80000},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '코펜하겐', 'index': 14, 'price': 300000, 'toll': 200000}],
+    [{'name': '런던', 'index': 37, 'price': 700000, 'toll': 200000},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '스톡홀름', 'index': 15, 'price': 500000, 'toll': 200000}],
+    [{'name': '황금열쇠', 'index': 36, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '콩고드\n여객기', 'index': 16, 'price': 600000, 'toll': 200000}],
+    [{'name': '로마', 'index': 35, 'price': 550000, 'toll': 100000},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '취리히', 'index': 17, 'price': 350000, 'toll': 150000}],
+    [{'name': '파리', 'index': 34, 'price': 750000, 'toll': 350000},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '황금열쇠', 'index': 18, 'price': 0, 'toll': 0}],
+    [{'name': '콜롬비아호', 'index': 33, 'price': 650000, 'toll': 65000},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '베를린', 'index': 19, 'price': 600000, 'toll': 60000}],
+    [{'name': '도쿄', 'index': 32, 'price': 700000, 'toll': 70000},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '', 'index': 0, 'price': 0, 'toll': 0},
+     {'name': '몬트리올', 'index': 20, 'price': 400000, 'toll': 40000}],
+    [{'name': '우주여행', 'index': 31, 'price': 0, 'toll': 0},
+     {'name': '마드리드', 'index': 30, 'price': 450000, 'toll': 45000},
+     {'name': '퀸 엘리자\n베스호', 'index': 29, 'price': 500000, 'toll': 50000},
+     {'name': '리스본', 'index': 28, 'price': 350000, 'toll': 35000},
+     {'name': '하와이', 'index': 27, 'price': 300000, 'toll': 30000},
+     {'name': '부산', 'index': 26, 'price': 250000, 'toll': 25000},
+     {'name': '시드니', 'index': 25, 'price': 400000, 'toll': 40000},
+     {'name': '상파울로', 'index': 24, 'price': 450000, 'toll': 45000},
+     {'name': '황금열쇠', 'index': 23, 'price': 0, 'toll': 0},
+     {'name': '부에노스\n아이레스', 'index': 22, 'price': 350000, 'toll': 35000},
+     {'name': '사회복지\n기금', 'index': 21, 'price': 0, 'toll': 0}]
 ]
 
 # 색상 설정
@@ -274,8 +384,8 @@ class BuruMarbleGame:
         flat_board = Utils.flatted_board(board)
         for item in flat_board:
             if item["name"] == city_name:
-                return City(city_name, item["index"])
-        return City(city_name, -1)
+                return City(city_name, item["index"], item["price"], item["toll"])
+        return City(city_name, -1, 0, 0)
 
     def __get_start_point_money(self):
         return 200000
@@ -351,11 +461,15 @@ class BuruMarbleGame:
 
     def show_city_sell_popup(self, player, required_amount):
         def on_submit():
-            selected_city_name = city_listbox.get(city_listbox.curselection())
+            selected_city_full_name = city_listbox.get(city_listbox.curselection())
+            selected_city_name = selected_city_full_name.split(' - ')[0]
             selected_city = self.get_city(selected_city_name)
             if selected_city.sell_city(player):
-                player['money'] += selected_city.get_price()
+                pass
+            self.root.bind('<space>', self.roll_dice)
             popup.destroy()
+
+        self.root.unbind('<space>')
 
         popup = Toplevel(self.root)
         popup.title("Sell City")
@@ -364,7 +478,7 @@ class BuruMarbleGame:
         
         city_listbox = Listbox(popup)
         for city in player['cities']:
-            city_listbox.insert(END, city.get_name())
+            city_listbox.insert(END, f"{city.get_name()} - {city.get_price()}원")
         city_listbox.pack()
         
         tk.Button(popup, text="Sell City", command=on_submit).pack()
@@ -373,31 +487,29 @@ class BuruMarbleGame:
 
     def pay_toll_with_city_sell(self, player, owner, toll_amount):
         self.bankrupt_flag = False
-        if player['money'] >= toll_amount:
-            player['money'] -= toll_amount
-            owner['money'] += toll_amount
-            messagebox.showinfo("통행료 지불 완료", f"{player['name']}님이 {owner['name']}님에게 {toll_amount}원을 지불했습니다.")
-        else:
-            total_paid = player['money']
-            player['money'] = 0
+        total_paid = player['money']
+        player['money'] = 0
 
-            while total_paid < toll_amount and player['cities']:
-                required_amount = toll_amount - total_paid
-                self.show_city_sell_popup(player, required_amount)
-                total_paid += player['money']
-            
-            if total_paid >= toll_amount:
-                player['money'] -= (total_paid - toll_amount)
-                owner['money'] += toll_amount
-                messagebox.showinfo("통행료 지불 완료", f"{player['name']}님이 {owner['name']}님에게 {toll_amount}원을 지불했습니다.")
+        while total_paid < toll_amount and player['cities']:
+            required_amount = toll_amount - total_paid
+            self.show_city_sell_popup(player, required_amount)
+            total_paid += player['money']
+            player['money'] = 0  # 도시 판매 후 금액 초기화
+
+        if total_paid >= toll_amount:
+            remaining_money = total_paid - toll_amount
+            player['money'] = remaining_money
+            owner['money'] += toll_amount
+            messagebox.showinfo("통행료 지불 완료", f"{player['name']}님이 {owner['name']}님에게 {toll_amount}원을 지불했습니다. 남은 금액: {remaining_money}원")
+        else:
+            owner['money'] += total_paid
+            if not player['cities'] and total_paid < toll_amount:
+                messagebox.showinfo("파산", f"{player['name']}님이 {owner['name']}님에게 {total_paid}원을 지불하고 파산했습니다.")
+                player['money'] = 0
+                self.bankrupt_flag = True
             else:
-                owner['money'] += total_paid
-                if not player['cities'] and player['money'] < toll_amount:
-                    messagebox.showinfo("파산", f"{player['name']}님이 {owner['name']}님에게 {total_paid}원을 지불하고 파산했습니다.")
-                    player['money'] = 0
-                    self.bankrupt_flag = True
-                else:
-                    messagebox.showinfo("통행료 지불 완료", f"{player['name']}님이 {owner['name']}님에게 {total_paid}원을 지불했습니다.")
+                messagebox.showinfo("통행료 지불 완료", f"{player['name']}님이 {owner['name']}님에게 {total_paid}원을 지불했습니다. 남은 금액: {player['money']}원")
+
 
 # 게임 실행
 root = tk.Tk()
