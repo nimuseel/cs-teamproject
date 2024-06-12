@@ -151,7 +151,7 @@ class BuruMarbleGame:
         self.cell_width = 80
         self.cell_height = 80
 
-        player = Player(root, self.create_board)
+        player = Player(root, self.start_game)
 
         self.players = player.players
         self.community_chest_fund = 0
@@ -168,6 +168,11 @@ class BuruMarbleGame:
         self.space_travel_player = None  # 우주여행을 실행한 플레이어를 추적하기 위한 변수
 
         player.create_player_selection()
+
+    def start_game(self, players):
+        self.players = players
+        self.create_board()
+        self.show_city_info_popup()
 
     def create_board(self):
         for i in range(11):
@@ -206,9 +211,34 @@ class BuruMarbleGame:
         self.show_player_info()
 
         # 스페이스바 이벤트 바인딩
-        self.canvas.create_text(440, 700, text=f"플레이어 {self.play_order}번 차례, 스페이스 바를 눌러 주사위를 굴리세요", font=("Helvetica", 16), tags="dice_roll_info", fill="black")    
+        self.canvas.create_text(440, 700, text=f"플레이어 {self.play_order}번 차례, 스페이스 바를 눌러 주사위를 굴리세요", font=("Helvetica", 16), tags="dice_roll_info", fill="black")
         
         self.root.bind('<space>', self.roll_dice)
+
+    def show_city_info_popup(self):
+        self.city_info_popup = Toplevel(self.root)
+        self.city_info_popup.title("도시 정보")
+        self.city_info_popup.geometry("300x1100")
+
+        self.city_info_text = tk.Text(self.city_info_popup, wrap="word", width=35, height=70)
+        self.city_info_text.pack(pady=10)
+
+        self.update_city_info_popup()
+
+    def update_city_info_popup(self):
+        self.city_info_text.config(state="normal")
+        self.city_info_text.delete("1.0", END)
+
+        flat_board = Utils.flatted_board(board)
+        for item in flat_board:
+            if item["name"] not in ["출발지점", "황금열쇠", "무인도", "사회복지\n기금", "우주여행"]:
+                city = self.get_city(item["name"])
+                owner = city.get_owner()
+                owner_name = owner["name"] if owner else "없음"
+                city_info = f"도시: {item['name']}\n구매 가격: {item['price']}원\n통행료: {item['toll']}원\n소유주: {owner_name}\n\n"
+                self.city_info_text.insert(END, city_info)
+
+        self.city_info_text.config(state="disabled")
         
     def roll_dice(self, event):
         if self.space_travel_player == self.players[self.play_order - 1]:
@@ -402,7 +432,8 @@ class BuruMarbleGame:
                 if response:
                     city.buy_city(player)
                     messagebox.showinfo("구매 완료", f"{city.get_name()} 도시를 구매하였습니다.")
-                    self.show_player_info()  # 플레이어 정보 업데이트
+                    self.update_city_info_popup() 
+                    self.show_player_info()
                 else:
                     messagebox.showinfo("구매 취소", "도시 구매를 취소하였습니다.")
             else:
@@ -416,18 +447,18 @@ class BuruMarbleGame:
             selected_city = self.get_city(selected_city_name)
             player["currentPosition"] = selected_city.get_index()
             player["currentPositionName"] = selected_city_name
-            self.space_travel_player = None  # 우주여행 상태 초기화
+            self.space_travel_player = None
             self.root.bind('<space>', self.roll_dice)
             city_selection_window.destroy()
             self.show_player_info()
-            self.perform_city_action(player)  # 이동 후 도시 관련 행동 수행
+            self.perform_city_action(player)
 
         self.root.unbind('<space>')
 
         city_selection_window = Toplevel(self.root)
         city_selection_window.title("도시 선택")
-        city_selection_window.geometry("300x350")  # 팝업창 크기 조정
-        city_listbox = Listbox(city_selection_window, width=40, height=15)  # 리스트박스 크기 조정
+        city_selection_window.geometry("300x350")
+        city_listbox = Listbox(city_selection_window, width=40, height=15)
         city_listbox.pack(pady=10)
 
         flat_board = Utils.flatted_board(board)
@@ -470,14 +501,14 @@ class BuruMarbleGame:
             selected_city_name = selected_city_full_name.split(' - ')[0]
             selected_city = self.get_city(selected_city_name)
             if selected_city.sell_city(player):
-                pass
+                self.update_city_info_popup()
             self.root.bind('<space>', self.roll_dice)
             popup.destroy()
 
         self.root.unbind('<space>')
 
         popup = Toplevel(self.root)
-        popup.title("Sell City")
+        popup.title("도시 판매")
         tk.Label(popup, text=f"{player['name']}님, 통행료가 부족하여 도시를 판매해야 합니다.").pack()
         tk.Label(popup, text=f"필요한 금액: {required_amount} - 소유 금액: {player['money']}").pack()
         

@@ -3,11 +3,10 @@ import tkinter as tk
 class Player:
     def __init__(self, root, game_start_fn):
         self.root = root
+        self.game_start = game_start_fn
 
         self.players = []  # 플레이어들의 정보(이름, 금액, 소유 도시 등)를 저장할 리스트
         self.play_order = 1  # 플레이 순서
-
-        self.game_start = game_start_fn
 
     def create_player_selection(self):
         self.label = tk.Label(self.root, text="플레이어 인원을 선택하세요 (2~4명):", font=("Helvetica", 16))
@@ -29,7 +28,7 @@ class Player:
 
         self.start_button = tk.Button(self.root, text="게임 시작", font=("Helvetica", 14), command=self.__get_player_names)
         self.start_button.place(x=300, y=250)
-    
+
     def __get_player_names(self):
         num_players = self.player_count.get()
         self.player_name_entries = []
@@ -37,7 +36,7 @@ class Player:
         # 이름 입력창을 추가하는 커스텀 다이얼로그 생성
         self.name_entry_window = tk.Toplevel(self.root)
         self.name_entry_window.title("플레이어 이름 입력")
-        self.name_entry_window.geometry("300x200")
+        self.name_entry_window.geometry("300x400")
         self.name_entry_window.transient(self.root)
         self.name_entry_window.grab_set()
 
@@ -50,7 +49,7 @@ class Player:
             self.player_name_entries.append(entry)
 
         tk.Button(self.name_entry_window, text="확인", command=self.__save_player_names).pack(pady=20)
-    
+
     def __save_player_names(self):
         for entry in self.player_name_entries:
             name = entry.get()
@@ -105,7 +104,4 @@ class Player:
                     self.players[i]['money'] = 2000000  # 입력값이 유효하지 않으면 200만원으로 설정
 
         self.money_entry_window.destroy()
-        self.game_start()
-
-    def start_game(self):
         self.game_start(self.players)
