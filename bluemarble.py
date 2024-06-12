@@ -432,16 +432,16 @@ class BuruMarbleGame:
     def ask_to_buy_city(self, player, city):
         if city.get_owner() is None and city.is_buyable():
             if player['money'] >= city.get_price():
-                response = messagebox.askyesno("도시 구매", f"{city.get_name()} 도시를 {city.get_price()}원에 구매하시겠습니까?")
+                response = messagebox.askyesno("도시 구매", f"{player['name']}님, {city.get_name()} 도시를 {city.get_price()}원에 구매하시겠습니까?")
                 if response:
                     city.buy_city(player)
-                    messagebox.showinfo("구매 완료", f"{city.get_name()} 도시를 구매하였습니다.")
+                    messagebox.showinfo("구매 완료", f"{player['name']}님이 {city.get_name()} 도시를 구매하였습니다.")
                     self.update_city_info_popup() 
                     self.show_player_info()
                 else:
-                    messagebox.showinfo("구매 취소", "도시 구매를 취소하였습니다.")
+                    messagebox.showinfo("구매 취소", f"{player['name']}님이 {city.get_name()} 도시 구매를 취소하였습니다.")
             else:
-                messagebox.showinfo("구매 불가", f"소유한 돈이 부족하여 {city.get_name()} 도시를 구매할 수 없습니다.")
+                messagebox.showinfo("구매 불가", f"소유한 돈이 부족하여 {player['name']}님은 {city.get_name()} 도시를 구매할 수 없습니다.")
         else:
             messagebox.showinfo("구매 불가", f"{city.get_name()} 도시는 이미 다른 플레이어가 소유하고 있거나 구매할 수 없습니다.")
 
@@ -514,7 +514,7 @@ class BuruMarbleGame:
         popup = Toplevel(self.root)
         popup.title("도시 판매")
         tk.Label(popup, text=f"{player['name']}님, 통행료가 부족하여 도시를 판매해야 합니다.").pack()
-        tk.Label(popup, text=f"필요한 금액: {required_amount} - 소유 금액: {player['money']}").pack()
+        tk.Label(popup, text=f"필요한 금액: {required_amount}원").pack()
         
         city_listbox = Listbox(popup)
         for city in player['cities']:
