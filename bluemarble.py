@@ -306,6 +306,8 @@ class BuruMarbleGame:
             flat_board = Utils.flatted_board(board)
             current_player["currentPositionName"] = next(item["name"] for item in flat_board if item["index"] == teleport)
             result_text = f"{current_player['name']}님이\n {current_player['currentPositionName']}으로 이동합니다."
+            if current_player["currentPositionName"] == "우주여행":
+                self.space_travel_player = current_player
 
         elif gimick_type == "gain":
             gain_money = int(0.2 * current_money)
@@ -462,6 +464,9 @@ class BuruMarbleGame:
         city_selection_window = Toplevel(self.root)
         city_selection_window.title("도시 선택")
         city_selection_window.geometry("300x350")
+        
+        tk.Label(city_selection_window, text=f"{player['name']}님, 이동할 도시를 선택하세요.", font=("Helvetica", 12)).pack(pady=10)
+        
         city_listbox = Listbox(city_selection_window, width=40, height=15)
         city_listbox.pack(pady=10)
 
@@ -516,7 +521,7 @@ class BuruMarbleGame:
         tk.Label(popup, text=f"{player['name']}님, 통행료가 부족하여 도시를 판매해야 합니다.").pack()
         tk.Label(popup, text=f"필요한 금액: {required_amount}원").pack()
         
-        city_listbox = Listbox(popup)
+        city_listbox = Listbox(popup, width = 40, height = 15)
         for city in player['cities']:
             city_listbox.insert(END, f"{city.get_name()} - {city.get_price()}원")
         city_listbox.pack()
