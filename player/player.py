@@ -95,13 +95,15 @@ class Player:
     def __save_player_money(self):
         for i, entry in enumerate(self.money_entries):
             if self.auto_money.get():
-                self.players[i]['money'] = 2000000  # 200만원 자동 설정
+                money = 2000000
+                self.players[i]['money'] = money  # 200만원 자동 설정
             else:
                 try:
                     money = int(entry.get())
                     self.players[i]['money'] = money
                 except ValueError:
-                    self.players[i]['money'] = 2000000  # 입력값이 유효하지 않으면 200만원으로 설정
+                    money = 2000000
+                    self.players[i]['money'] = money  # 입력값이 유효하지 않으면 200만원으로 설정
 
         self.money_entry_window.destroy()
         self.game_start(self.players)

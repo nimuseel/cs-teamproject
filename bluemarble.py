@@ -211,7 +211,7 @@ class BuruMarbleGame:
         self.show_player_info()
 
         # 스페이스바 이벤트 바인딩
-        self.canvas.create_text(440, 700, text=f"플레이어 {self.play_order}번 차례, 스페이스 바를 눌러 주사위를 굴리세요", font=("Helvetica", 16), tags="dice_roll_info", fill="black")
+        self.canvas.create_text(440, 700, text=f"{self.players[self.play_order -1]['name']} 님의 차례, 스페이스 바를 눌러 주사위를 굴리세요", font=("Helvetica", 16), tags="dice_roll_info", fill="black")
         
         self.root.bind('<space>', self.roll_dice)
 
@@ -305,41 +305,45 @@ class BuruMarbleGame:
             current_player["currentPosition"] = teleport
             flat_board = Utils.flatted_board(board)
             current_player["currentPositionName"] = next(item["name"] for item in flat_board if item["index"] == teleport)
-            result_text = f"{current_player['name']}님이 {current_player['currentPositionName']}으로 이동합니다."
+            result_text = f"{current_player['name']}님이\n {current_player['currentPositionName']}으로 이동합니다."
 
         elif gimick_type == "gain":
             gain_money = int(0.2 * current_money)
             current_player['money'] += gain_money
-            result_text = f"{current_player['name']}님이 {gain_money}원을 받습니다."
+            result_text = f"{current_player['name']}님이\n {gain_money}원(현재 금액의 20%)을 받습니다."
 
         elif gimick_type == "lose":
             lose_money = int(0.2 * current_money)
             current_player['money'] -= lose_money
-            result_text = f"{current_player['name']}님이 {lose_money}원을 잃습니다."
+            result_text = f"{current_player['name']}님이\n {lose_money}원(현재 금액의 20%)을 잃습니다."
 
-        self.canvas.delete("gimick_result")
-        self.canvas.create_text(440, 740, text=result_text, font=("Helvetica", 16), tags="gimick_result", fill="black")
+        messagebox.showinfo("황금열쇠 이벤트 발생!", result_text)
 
     def gain_community_chest_fund(self):
-        self.players[self.play_order - 1]['money'] += self.community_chest_fund
-        self.community_chest_fund = 0  # 사회복지기금 초기화
+        amount = self.community_chest_fund
+        self.players[self.play_order - 1]['money'] += amount
+        self.community_chest_fund = 0 # 사회복지기금 초기화
+        result_text = f"{self.players[self.play_order - 1]['name']}님이 사회복지기금 {amount}원을 받습니다."
+        messagebox.showinfo("사회복지기금 회수", result_text)
 
     def lose_community_chest_fund(self):
-        amount = int(0.2 * self.players[self.play_order - 1]['money'])
+        amount = int(0.2 * self.players[self.play_order - 1]['money']) # 시작 금액의 20%
         self.players[self.play_order - 1]['money'] -= amount
         self.community_chest_fund += amount
+        result_text = f"{self.players[self.play_order - 1]['name']}님이 사회복지기금에 {amount}원을 기부합니다."
+        messagebox.showinfo("사회복지기금 기부", result_text)
 
     def reset_dice(self):
         self.result = 0
         self.canvas.delete("dice_result")
         current_player = self.players[self.play_order - 1]
-        escape_info_text = f"플레이어 {self.play_order}번 차례, 무인도에 갇혀 더블이 나오거나, 세 번 주사위를 굴리면 탈출할 수 있습니다."
-        lets_escape_text = f"플레이어 {self.play_order}번 차례, 스페이스 바를 눌러 무인도를 탈출하세요."
+        escape_info_text = f"{self.players[self.play_order -1]['name']} 님의 차례, 무인도에 갇혀 더블이 나오거나, 세 번 주사위를 굴리면 탈출할 수 있습니다."
+        lets_escape_text = f"{self.players[self.play_order -1]['name']} 님의 차례, 스페이스 바를 눌러 무인도를 탈출하세요."
         uninhabited_island_info_render_text = lets_escape_text if current_player["uninhabitedIslandCount"] == 3 else escape_info_text
         if current_player.get("currentPositionName") == "무인도":
             self.canvas.create_text(440, 700, text=uninhabited_island_info_render_text, font=("Helvetica", 16), tags="uninhabited_island_info", fill="black")
         else:
-            self.canvas.create_text(440, 700, text=f"플레이어 {self.play_order}번 차례, 스페이스 바를 눌러 주사위를 굴리세요", font=("Helvetica", 16), tags="dice_roll_info", fill="black")
+            self.canvas.create_text(440, 700, text=f"{self.players[self.play_order -1]['name']} 님의 차례, 스페이스 바를 눌러 주사위를 굴리세요", font=("Helvetica", 16), tags="dice_roll_info", fill="black")
 
     def show_player_info(self):
         self.canvas.delete("player_info")
