@@ -112,9 +112,17 @@ class Player:
     def _get_max_turn(self):
         self.max_turn_window = tk.Toplevel(self.root)
         self.max_turn_window.title("최대 턴 수 설정")
-        self.max_turn_window.geometry("300x200")
+        self.max_turn_window.geometry("400x300")
         self.max_turn_window.transient(self.root)
         self.max_turn_window.grab_set()
+
+        tk.Label(self.max_turn_window, text="최대 턴수 설정", font=("Helvetica", 14)).pack(pady=10)
+
+        self.auto_turn = tk.BooleanVar()
+        self.auto_turn.set(True)
+
+        auto_turn_check = tk.Checkbutton(self.max_turn_window, text="자동 설정 (20턴)", variable=self.auto_money, font=("Helvetica", 12))
+        auto_turn_check.pack(pady=5)
 
         self.max_turn_entry = tk.Entry(self.max_turn_window, font=("Helvetica", 12))
         self.max_turn_entry.pack(pady=10)
@@ -122,6 +130,8 @@ class Player:
         tk.Button(self.max_turn_window, text="확인", command=self.__save_max_turn).pack(pady=20)
 
     def __save_max_turn(self):
+        if self.auto_turn.get():
+            self.max_turn = 20
         try:
             self.max_turn = int(self.max_turn_entry.get())
         except ValueError:
