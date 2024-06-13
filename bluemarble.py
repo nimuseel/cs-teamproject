@@ -356,7 +356,7 @@ class BuruMarbleGame:
 
     def show_turn_info(self):
         self.canvas.delete("turn_info")
-        self.canvas.create_text(600, 150, text=f"현재 턴수 : {self.turn_count}\n최대 턴수 : {self.max_turn}\n\n사회복지기금 : {self.community_chest_fund}원", font=("Helvetica", 12), tags="turn_info", fill="black")
+        self.canvas.create_text(600, 600, text=f"현재 턴수 : {self.turn_count}\n최대 턴수 : {self.max_turn}\n\n사회복지기금 : {self.community_chest_fund}원", font=("Helvetica", 12), tags="turn_info", fill="black")
 
     def update_player_info(self):
         flat_board = Utils.flatted_board(board)
@@ -567,13 +567,19 @@ class BuruMarbleGame:
         self.root.quit()  # 게임 종료
 
     def end_game2(self): # 최대 턴 수에 도달하여 가장 많은 돈을 가진 사람이 승리
-        winner = self.players[0]
-        for player in self.players[1:]:
-            if player['money'] > winner['money']:
+        max_total_value = 0
+        winner = None
+        
+        for player in self.players:
+            total_city_value = sum(city.get_price() for city in player['cities'])
+            total_value = player['money'] + total_city_value
+            
+            if total_value > max_total_value:
+                max_total_value = total_value
                 winner = player
         
-        messagebox.showinfo("게임 종료", f"{winner['name']}님이 승리했습니다!")
-        self.root.quit()  # 게임 종료   
+        messagebox.showinfo("게임 종료", f"{winner['name']}님이 승리했습니다! 총 자산: {max_total_value}원(도시가치 포함)")
+        self.root.quit()  # 게임 종료
 
 # 게임 실행
 root = tk.Tk()
