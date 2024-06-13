@@ -112,7 +112,7 @@ class Player:
     def _get_max_turn(self):
         self.max_turn_window = tk.Toplevel(self.root)
         self.max_turn_window.title("최대 턴 수 설정")
-        self.max_turn_window.geometry("400x300")
+        self.max_turn_window.geometry("300x200")
         self.max_turn_window.transient(self.root)
         self.max_turn_window.grab_set()
 
@@ -132,10 +132,11 @@ class Player:
     def __save_max_turn(self):
         if self.auto_turn.get():
             self.max_turn = 20
-        try:
-            self.max_turn = int(self.max_turn_entry.get())
-        except ValueError:
-            self.max_turn = 20 # 기본 최대 턴수
+        else:
+            try:
+                self.max_turn = int(self.max_turn_entry.get())
+            except ValueError:
+                self.max_turn = 20 # 기본 최대 턴수
 
         self.max_turn_window.destroy()
-        self.game_start(self.players)
+        self.game_start(self.players,self.max_turn)

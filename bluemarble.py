@@ -169,8 +169,9 @@ class BuruMarbleGame:
 
         player.create_player_selection()
 
-    def start_game(self, players):
+    def start_game(self, players, max_turn):
         self.players = players
+        self.max_turn = max_turn
         self.create_board()
         self.show_city_info_popup()
 
@@ -354,7 +355,7 @@ class BuruMarbleGame:
 
     def show_turn_info(self):
         self.canvas.delete("turn_info")
-        self.canvas.create_text(700, 700, text=f"현재 턴수 : {self.turn_count}\n최대 턴수 : {self.max_turn}", font=("Helvetica", 16), tags="dice_result", fill="black")
+        self.canvas.create_text(700, 700, text=f"현재 턴수 : {self.turn_count}\n최대 턴수 : {self.max_turn}", font=("Helvetica", 12), tags="dice_result", fill="black")
 
     def update_player_info(self):
         flat_board = Utils.flatted_board(board)
