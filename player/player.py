@@ -7,6 +7,7 @@ class Player:
 
         self.players = []  # 플레이어들의 정보(이름, 금액, 소유 도시 등)를 저장할 리스트
         self.play_order = 1  # 플레이 순서
+        self.max_turn = 0
 
     def create_player_selection(self):
         self.label = tk.Label(self.root, text="플레이어 인원을 선택하세요 (2~4명):", font=("Helvetica", 16))
@@ -106,4 +107,25 @@ class Player:
                     self.players[i]['money'] = money  # 입력값이 유효하지 않으면 200만원으로 설정
 
         self.money_entry_window.destroy()
+        self._get_max_turn()
+
+    def _get_max_turn(self):
+        self.max_turn_window = tk.Toplevel(self.root)
+        self.max_turn_window.title("최대 턴 수 설정")
+        self.max_turn_window.geometry("300x200")
+        self.max_turn_window.transient(self.root)
+        self.max_turn_window.grab_set()
+
+        self.max_turn_entry = tk.Entry(self.max_turn_window, font=("Helvetica", 12))
+        self.max_turn_entry.pack(pady=10)
+
+        tk.Button(self.max_turn_window, text="확인", command=self.__save_max_turn).pack(pady=20)
+
+    def __save_max_turn(self):
+        try:
+            self.max_turn = int(self.max_turn_entry.get())
+        except ValueError:
+            self.max_turn = 20 # 기본 최대 턴수
+
+        self.max_turn_window.destroy()
         self.game_start(self.players)

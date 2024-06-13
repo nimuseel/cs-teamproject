@@ -29,7 +29,7 @@ board = [
      {'name': '', 'index': 0, 'price': 0, 'toll': 0},
      {'name': '', 'index': 0, 'price': 0, 'toll': 0},
      {'name': '아테네', 'index': 12, 'price': 300000, 'toll': 300000}],
-    [{'name': '사회복지\n기금', 'index': 39, 'price': 0, 'toll': 0},
+    [{'name': '사회복지기금', 'index': 39, 'price': 0, 'toll': 0},
      {'name': '', 'index': 0, 'price': 0, 'toll': 0},
      {'name': '', 'index': 0, 'price': 0, 'toll': 0},
      {'name': '', 'index': 0, 'price': 0, 'toll': 0},
@@ -72,7 +72,7 @@ board = [
      {'name': '', 'index': 0, 'price': 0, 'toll': 0},
      {'name': '', 'index': 0, 'price': 0, 'toll': 0},
      {'name': '', 'index': 0, 'price': 0, 'toll': 0},
-     {'name': '콩고드\n여객기', 'index': 16, 'price': 600000, 'toll': 200000}],
+     {'name': '여객기', 'index': 16, 'price': 600000, 'toll': 200000}],
     [{'name': '로마', 'index': 35, 'price': 550000, 'toll': 100000},
      {'name': '', 'index': 0, 'price': 0, 'toll': 0},
      {'name': '', 'index': 0, 'price': 0, 'toll': 0},
@@ -119,15 +119,15 @@ board = [
      {'name': '몬트리올', 'index': 20, 'price': 400000, 'toll': 40000}],
     [{'name': '우주여행', 'index': 31, 'price': 0, 'toll': 0},
      {'name': '마드리드', 'index': 30, 'price': 450000, 'toll': 45000},
-     {'name': '퀸 엘리자\n베스호', 'index': 29, 'price': 500000, 'toll': 50000},
+     {'name': '퀸 엘리자호', 'index': 29, 'price': 500000, 'toll': 50000},
      {'name': '리스본', 'index': 28, 'price': 350000, 'toll': 35000},
      {'name': '하와이', 'index': 27, 'price': 300000, 'toll': 30000},
      {'name': '부산', 'index': 26, 'price': 250000, 'toll': 25000},
      {'name': '시드니', 'index': 25, 'price': 400000, 'toll': 40000},
      {'name': '상파울로', 'index': 24, 'price': 450000, 'toll': 45000},
      {'name': '황금열쇠', 'index': 23, 'price': 0, 'toll': 0},
-     {'name': '부에노스\n아이레스', 'index': 22, 'price': 350000, 'toll': 35000},
-     {'name': '사회복지\n기금', 'index': 21, 'price': 0, 'toll': 0}]
+     {'name': '부에노스', 'index': 22, 'price': 350000, 'toll': 35000},
+     {'name': '사회복지기금', 'index': 21, 'price': 0, 'toll': 0}]
 ]
 
 # 색상 설정
@@ -162,7 +162,7 @@ class BuruMarbleGame:
 
         self.city = []  # 도시 정보를 저장할 리스트
         self.turn_count = 0
-        self.max_turns = 20
+        self.max_turn = player.max_turn
 
         self.is_double = False
         self.space_travel_player = None  # 우주여행을 실행한 플레이어를 추적하기 위한 변수
@@ -209,6 +209,7 @@ class BuruMarbleGame:
 
         # 플레이어 이름 및 보유 머니 출력
         self.show_player_info()
+        self.show_turn_info()
 
         # 스페이스바 이벤트 바인딩
         self.canvas.create_text(440, 700, text=f"{self.players[self.play_order -1]['name']} 님의 차례, 스페이스 바를 눌러 주사위를 굴리세요", font=("Helvetica", 16), tags="dice_roll_info", fill="black")
@@ -231,7 +232,7 @@ class BuruMarbleGame:
 
         flat_board = Utils.flatted_board(board)
         for item in flat_board:
-            if item["name"] not in ["출발지점", "황금열쇠", "무인도", "사회복지\n기금", "우주여행"]:
+            if item["name"] not in ["출발지점", "황금열쇠", "무인도", "사회복지기금", "우주여행"]:
                 city = self.get_city(item["name"])
                 owner = city.get_owner()
                 owner_name = owner["name"] if owner else "없음"
@@ -241,10 +242,15 @@ class BuruMarbleGame:
         self.city_info_text.config(state="disabled")
         
     def roll_dice(self, event):
+
+        self.turn_count += 1 # 턴수 증가
         if self.space_travel_player == self.players[self.play_order - 1]:
             self.show_city_selection(self.players[self.play_order - 1])
         else:
             self.__roll_dice_logic(event)
+
+        if self.turn_count == self.max_turn:
+            self.end_game2()
 
     def __roll_dice_logic(self, event):
         dice1 = random.randint(1, 6)
@@ -285,15 +291,6 @@ class BuruMarbleGame:
             if not self.is_double:
                 self.__update_play_order()
             self.canvas.after(1000, self.reset_dice)
-
-    def check_winner(self):
-        active_players = [player['money'] for player in self.players if player['money'] > 0]
-        if len(active_players) == 1 or self.turn_count >= self.max_turns:
-            max_money = max(player['money'] for player in self.players)
-            winner_index = next(i for i, player in enumerate(self.players) if player['money'] == max_money)
-            winner_name = self.players[winner_index]["name"]
-            self.canvas.create_text(440, 440, text=f"게임 종료! 승자: {winner_name}", font=("Helvetica", 24), fill="red")
-            self.root.unbind('<space>')
 
     def random_gimick(self):
         current_player = self.players[self.play_order - 1]
@@ -355,6 +352,10 @@ class BuruMarbleGame:
             cities_owned = ', '.join(city.get_name() for city in player["cities"]) if player["cities"] else "없음"
             self.canvas.create_text(100, 120 + 70 * idx, text=f"{idx + 1}. {player_name} - {player['money']}원 \n 보유 도시: {cities_owned} \n 현재 위치: {current_player_position_name}", font=("Helvetica", 14), anchor="w", fill="black", tags="player_info")
 
+    def show_turn_info(self):
+        self.canvas.delete("turn_info")
+        self.canvas.create_text(700, 700, text=f"현재 턴수 : {self.turn_count}\n최대 턴수 : {self.max_turn}", font=("Helvetica", 16), tags="dice_result", fill="black")
+
     def update_player_info(self):
         flat_board = Utils.flatted_board(board)
         current_player = self.players[self.play_order - 1]
@@ -377,14 +378,14 @@ class BuruMarbleGame:
 
         if current_player["currentPositionName"] == "황금열쇠":
             self.random_gimick()
-        elif current_player["currentPositionName"] == "사회복지\n기금":
+        elif current_player["currentPositionName"] == "사회복지기금":
             if current_player["currentPosition"] == 21:  # 사회복지기금 회수
                 self.gain_community_chest_fund()
             elif current_player["currentPosition"] == 39:  # 사회복지기금 기부
                 self.lose_community_chest_fund()
         elif current_player["currentPositionName"] == "우주여행":
             self.ask_for_space_travel(current_player)
-        elif current_player["currentPositionName"] not in ["출발지점", "무인도", "황금열쇠", "사회복지\n기금"]:
+        elif current_player["currentPositionName"] not in ["출발지점", "무인도", "황금열쇠", "사회복지기금"]:
             city = self.get_city(current_player["currentPositionName"])
             if city.get_owner() is None and city.is_buyable():
                 self.ask_to_buy_city(current_player, city)
@@ -482,7 +483,7 @@ class BuruMarbleGame:
 
     def perform_city_action(self, player):
         city_name = player["currentPositionName"]
-        if city_name in ["출발지점", "무인도", "황금열쇠", "사회복지\n기금"]:
+        if city_name in ["출발지점", "무인도", "황금열쇠", "사회복지기금"]:
             self.execute_special_action(city_name)
         else:
             city = self.get_city(city_name)
@@ -497,7 +498,7 @@ class BuruMarbleGame:
         current_player = self.players[self.play_order - 1]
         if action_name == "황금열쇠":
             self.random_gimick()
-        elif action_name == "사회복지\n기금":
+        elif action_name == "사회복지기금":
             if current_player["currentPosition"] == 21:
                 self.gain_community_chest_fund()
             elif current_player["currentPosition"] == 39:
@@ -552,9 +553,25 @@ class BuruMarbleGame:
                 messagebox.showinfo("파산", f"{player['name']}님이 {owner['name']}님에게 {total_paid}원을 지불하고 파산했습니다.")
                 player['money'] = 0
                 self.bankrupt_flag = True
+                self.players.remove(player)
+                if len(self.players) == 1:
+                    self.end_game()
             else:
                 messagebox.showinfo("통행료 지불 완료", f"{player['name']}님이 {owner['name']}님에게 {total_paid}원을 지불했습니다. 남은 금액: {player['money']}원")
 
+    def end_game(self): # 한 명 제외 파산했을 때 게임 승리
+        winner = self.players[0]
+        messagebox.showinfo("게임 종료", f"{winner['name']}님이 승리했습니다!")
+        self.root.quit()  # 게임 종료
+
+    def end_game2(self): # 최대 턴 수에 도달하여 가장 많은 돈을 가진 사람이 승리
+        winner = self.players[0]
+        for player in self.players[1:]:
+            if player['money'] > winner['money']:
+                winner = player
+        
+        messagebox.showinfo("게임 종료", f"{winner['name']}님이 승리했습니다!")
+        self.root.quit()  # 게임 종료   
 
 # 게임 실행
 root = tk.Tk()
