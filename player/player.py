@@ -121,7 +121,7 @@ class Player:
         self.auto_turn = tk.BooleanVar()
         self.auto_turn.set(True)
 
-        auto_turn_check = tk.Checkbutton(self.max_turn_window, text="자동 설정 (20턴)", variable=self.auto_money, font=("Helvetica", 12))
+        auto_turn_check = tk.Checkbutton(self.max_turn_window, text="자동 설정 (20턴)", variable=self.auto_turn, font=("Helvetica", 12))
         auto_turn_check.pack(pady=5)
 
         self.max_turn_entry = tk.Entry(self.max_turn_window, font=("Helvetica", 12))

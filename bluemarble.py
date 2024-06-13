@@ -245,6 +245,7 @@ class BuruMarbleGame:
     def roll_dice(self, event):
 
         self.turn_count += 1 # 턴수 증가
+        self.show_turn_info()
         if self.space_travel_player == self.players[self.play_order - 1]:
             self.show_city_selection(self.players[self.play_order - 1])
         else:
@@ -355,7 +356,7 @@ class BuruMarbleGame:
 
     def show_turn_info(self):
         self.canvas.delete("turn_info")
-        self.canvas.create_text(700, 700, text=f"현재 턴수 : {self.turn_count}\n최대 턴수 : {self.max_turn}", font=("Helvetica", 12), tags="dice_result", fill="black")
+        self.canvas.create_text(600, 150, text=f"현재 턴수 : {self.turn_count}\n최대 턴수 : {self.max_turn}\n\n사회복지기금 : {self.community_chest_fund}원", font=("Helvetica", 12), tags="turn_info", fill="black")
 
     def update_player_info(self):
         flat_board = Utils.flatted_board(board)
