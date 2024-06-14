@@ -243,7 +243,6 @@ class BuruMarbleGame:
         self.city_info_text.config(state="disabled")
         
     def roll_dice(self, event):
-
         self.turn_count += 1 # 턴수 증가
         self.show_turn_info()
         if self.space_travel_player == self.players[self.play_order - 1]:
@@ -267,11 +266,13 @@ class BuruMarbleGame:
         double_text = f"더블! 주사위를 한 번 더 굴리세요"
         render_text = result_text + double_text if self.is_double else result_text
 
+        self.canvas.delete("dice_roll_info")
+        self.canvas.create_text(440, 700, text=render_text, font=("Helvetica", 16), tags="dice_result", fill="black")
+
         if current_player.get("currentPositionName") == "무인도":
             self.canvas.delete("uninhabited_island_info")
 
             if current_player["uninhabitedIslandCount"] == 3:
-                self.canvas.create_text(440, 700, text=render_text, font=("Helvetica", 16), tags="dice_result", fill="black")
                 current_player["uninhabitedIslandCount"] = 0
                 self.update_player_info()
                 self.__update_play_order()
@@ -285,11 +286,8 @@ class BuruMarbleGame:
                     current_player["uninhabitedIslandCount"] += 1
                     self.canvas.create_text(440, 700, text=f'{result_text}. 탈출 실패! 카운트: {current_player["uninhabitedIslandCount"]}', font=("Helvetica", 16), tags="dice_result", fill="black")
                     self.__update_play_order()
-            self.canvas.after(1000, self.reset_dice)
         else:
             self.update_player_info()
-            self.canvas.delete("dice_roll_info")
-            self.canvas.create_text(440, 700, text=render_text, font=("Helvetica", 16), tags="dice_result", fill="black")
             if not self.is_double:
                 self.__update_play_order()
             self.canvas.after(1000, self.reset_dice)
@@ -337,10 +335,16 @@ class BuruMarbleGame:
     def reset_dice(self):
         self.result = 0
         self.canvas.delete("dice_result")
+        self.canvas.delete("dice_roll_info")
+        if len(self.players) == 1:
+            self.end_game()
+            return
+
         current_player = self.players[self.play_order - 1]
         escape_info_text = f"{self.players[self.play_order -1]['name']} 님의 차례, 무인도에 갇혀 더블이 나오거나, 세 번 주사위를 굴리면 탈출할 수 있습니다."
         lets_escape_text = f"{self.players[self.play_order -1]['name']} 님의 차례, 스페이스 바를 눌러 무인도를 탈출하세요."
         uninhabited_island_info_render_text = lets_escape_text if current_player["uninhabitedIslandCount"] == 3 else escape_info_text
+
         if current_player.get("currentPositionName") == "무인도":
             self.canvas.create_text(440, 700, text=uninhabited_island_info_render_text, font=("Helvetica", 16), tags="uninhabited_island_info", fill="black")
         else:
@@ -433,9 +437,15 @@ class BuruMarbleGame:
         self.play_order += 1
         if self.play_order > len(self.players):
             self.play_order = 1
+        while self.players[self.play_order - 1]['money'] == 0:
+            self.play_order += 1
+            if self.play_order > len(self.players):
+                self.play_order = 1
 
     def ask_to_buy_city(self, player, city):
         if city.get_owner() is None and city.is_buyable():
+            self.canvas.delete("dice_result")
+            self.canvas.create_text(440, 750, text=f"{player['name']}님이 {city.get_name()} 도시를 구매할 수 있습니다.", font=("Helvetica", 16), tags="dice_result", fill="black")
             if player['money'] >= city.get_price():
                 response = messagebox.askyesno("도시 구매", f"{player['name']}님, {city.get_name()} 도시를 {city.get_price()}원에 구매하시겠습니까?")
                 if response:
@@ -508,6 +518,9 @@ class BuruMarbleGame:
         self.show_player_info()
 
     def show_city_sell_popup(self, player, required_amount):
+        self.canvas.delete("dice_result")
+        self.canvas.create_text(440, 700, text=f"{player['name']}님이 도시를 판매해야 합니다. 필요한 금액: {required_amount}원", font=("Helvetica", 16), tags="dice_result", fill="black")
+        
         def on_submit():
             selected_city_full_name = city_listbox.get(city_listbox.curselection())
             selected_city_name = selected_city_full_name.split(' - ')[0]
@@ -557,6 +570,16 @@ class BuruMarbleGame:
                 self.bankrupt_flag = True  # 파산 플래그 설정
             else:
                 messagebox.showinfo("통행료 지불 완료", f"{player['name']}님이 {owner['name']}님에게 {city.get_name()} 도시의 통행료 {total_paid}원을 지불했습니다. 남은 금액: {player['money']}원")
+
+        if self.bankrupt_flag:
+            self.remove_bankrupt_player(player)
+
+    def remove_bankrupt_player(self, player):
+        self.players.remove(player)
+        if len(self.players) == 1:
+            self.end_game()
+        else:
+            self.__update_play_order()
 
     def end_game(self): # 한 명 제외 파산했을 때 게임 승리
         winner = self.players[0]
