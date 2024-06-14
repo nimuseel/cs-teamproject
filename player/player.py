@@ -121,7 +121,7 @@ class Player:
         self.auto_turn = tk.BooleanVar()
         self.auto_turn.set(True)
 
-        auto_turn_check = tk.Checkbutton(self.max_turn_window, text="자동 설정 (20턴)", variable=self.auto_turn, font=("Helvetica", 12))
+        auto_turn_check = tk.Checkbutton(self.max_turn_window, text="자동 설정 (100턴)", variable=self.auto_turn, font=("Helvetica", 12))
         auto_turn_check.pack(pady=5)
 
         self.max_turn_entry = tk.Entry(self.max_turn_window, font=("Helvetica", 12))
@@ -131,12 +131,12 @@ class Player:
 
     def __save_max_turn(self):
         if self.auto_turn.get():
-            self.max_turn = 20
+            self.max_turn = 100
         else:
             try:
                 self.max_turn = int(self.max_turn_entry.get())
             except ValueError:
-                self.max_turn = 20 # 기본 최대 턴수
+                self.max_turn = 100 # 기본 최대 턴수
 
         self.max_turn_window.destroy()
         self.game_start(self.players,self.max_turn)
