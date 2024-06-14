@@ -278,13 +278,13 @@ class BuruMarbleGame:
                 self.__update_play_order()
             else:
                 if self.is_double:
-                    self.canvas.create_text(440, 700, text=f"탈출했습니다! {render_text}", font=("Helvetica", 16), tags="dice_result", fill="black")
+                    self.canvas.create_text(440, 750, text=f"탈출했습니다! {render_text}", font=("Helvetica", 16), tags="dice_result", fill="black")
                     current_player["uninhabitedIslandCount"] = 0
                     self.update_player_info()
                     self.__update_play_order()
                 else:
                     current_player["uninhabitedIslandCount"] += 1
-                    self.canvas.create_text(440, 700, text=f'{result_text}. 탈출 실패! 카운트: {current_player["uninhabitedIslandCount"]}', font=("Helvetica", 16), tags="dice_result", fill="black")
+                    self.canvas.create_text(440, 750, text=f'{result_text}. 탈출 실패! 카운트: {current_player["uninhabitedIslandCount"]}', font=("Helvetica", 16), tags="dice_result", fill="black")
                     self.__update_play_order()
         else:
             self.update_player_info()
@@ -341,7 +341,7 @@ class BuruMarbleGame:
             return
 
         current_player = self.players[self.play_order - 1]
-        escape_info_text = f"{self.players[self.play_order -1]['name']} 님의 차례, 무인도에 갇혀 더블이 나오거나, 세 번 주사위를 굴리면 탈출할 수 있습니다."
+        escape_info_text = f"{self.players[self.play_order -1]['name']} 님의 차례, 무인도에 갇혀 더블이 나오거나, \n세 번 주사위를 굴리면 탈출할 수 있습니다."
         lets_escape_text = f"{self.players[self.play_order -1]['name']} 님의 차례, 스페이스 바를 눌러 무인도를 탈출하세요."
         uninhabited_island_info_render_text = lets_escape_text if current_player["uninhabitedIslandCount"] == 3 else escape_info_text
 
