@@ -393,7 +393,7 @@ class BuruMarbleGame:
                 self.ask_to_buy_city(current_player, city)
             else:
                 if city.get_owner() != current_player:
-                    self.pay_toll_with_city_sell(current_player, city.get_owner(), city.get_toll())
+                    self.pay_toll_with_city_sell(current_player, city.get_owner(), city, city.get_toll())
                     self.show_player_info()
 
     def ask_for_space_travel(self, player):
@@ -493,7 +493,7 @@ class BuruMarbleGame:
                 self.ask_to_buy_city(player, city)
             else:
                 if city.get_owner() != player:
-                    self.pay_toll_with_city_sell(player, city.get_owner(), city.get_toll())
+                    self.pay_toll_with_city_sell(player, city.get_owner(), city, city.get_toll())
             self.show_player_info()
 
     def execute_special_action(self, action_name):
@@ -533,7 +533,7 @@ class BuruMarbleGame:
 
         self.root.wait_window(popup)
 
-    def pay_toll_with_city_sell(self, player, owner, toll_amount):
+    def pay_toll_with_city_sell(self, player, owner, city, toll_amount):
         self.bankrupt_flag = False
         total_paid = player['money']
         player['money'] = 0
@@ -548,18 +548,15 @@ class BuruMarbleGame:
             remaining_money = total_paid - toll_amount
             player['money'] = remaining_money
             owner['money'] += toll_amount
-            messagebox.showinfo("통행료 지불 완료", f"{player['name']}님이 {owner['name']}님에게 {toll_amount}원을 지불했습니다. 남은 금액: {remaining_money}원")
+            messagebox.showinfo("통행료 지불 완료", f"{player['name']}님이 {owner['name']}님에게 {city.get_name()} 도시의 통행료 {toll_amount}원을 지불했습니다. 남은 금액: {remaining_money}원")
         else:
             owner['money'] += total_paid
             if not player['cities'] and total_paid < toll_amount:
-                messagebox.showinfo("파산", f"{player['name']}님이 {owner['name']}님에게 {total_paid}원을 지불하고 파산했습니다.")
+                messagebox.showinfo("파산", f"{player['name']}님이 {owner['name']}님에게 {city.get_name()} 도시의 통행료 {total_paid}원을 지불하고 파산했습니다.")
                 player['money'] = 0
-                self.bankrupt_flag = True
-                self.players.remove(player)
-                if len(self.players) == 1:
-                    self.end_game()
+                self.bankrupt_flag = True  # 파산 플래그 설정
             else:
-                messagebox.showinfo("통행료 지불 완료", f"{player['name']}님이 {owner['name']}님에게 {total_paid}원을 지불했습니다. 남은 금액: {player['money']}원")
+                messagebox.showinfo("통행료 지불 완료", f"{player['name']}님이 {owner['name']}님에게 {city.get_name()} 도시의 통행료 {total_paid}원을 지불했습니다. 남은 금액: {player['money']}원")
 
     def end_game(self): # 한 명 제외 파산했을 때 게임 승리
         winner = self.players[0]
